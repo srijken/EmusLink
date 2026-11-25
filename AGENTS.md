@@ -52,7 +52,7 @@ xcodebuild test -project EmusLink.xcodeproj -scheme EmusLink \
 
 ## Afspraken
 
-- **Taal**: commentaar, UI-teksten en commitberichten zijn in het Nederlands.
+- **Taal**: commentaar, UI-teksten en commitberichten zijn in het Nederlands. De README is in het Engels.
 - **Threads**: Bluetooth-verwerking draait op `BLEManager.queue`; `LiveStore` wordt alleen op de main thread bijgewerkt (max. een paar keer per seconde). `EnergyTracker`, `ABRPClient` en `LocationProvider` zijn thread-safe met een `NSLock`. Houd dat zo.
 - **Tekens en eenheden**: stroom uit de BMS is positief bij laden; vermogen en verbruik volgen de ABRP-conventie (positief = verbruik, negatief = laden/regeneratie). Verbruik in Wh/km.
 - **Schrijven naar de module**: alleen naar characteristic `BB460003`. `BB460004` is de naam-instelling van de module (schrijven hernoemt hem!) en `0005` is vermoedelijk ook configuratie. Niet aankomen.
