@@ -2,7 +2,7 @@
 
 iOS app that reads the EMUS G1 BMS of an electric Land Rover Defender through the EMUS Smartphone Module (Bluetooth LE) and sends the state of charge to ABRP (A Better Routeplanner), also while in the background.
 
-The app's interface and the code comments are in Dutch.
+The app is available in English and Dutch and follows the language of the phone.
 
 ## Building
 
@@ -34,13 +34,18 @@ The ABRP credentials and the module name can also be set in the app itself (see 
 xcodebuild test -project EmusLink.xcodeproj -scheme EmusLink -destination 'platform=iOS Simulator,name=iPhone 18 Pro'
 ```
 
-The unit tests are in `EmusLinkTests/`. See [AGENTS.md](AGENTS.md) (in Dutch) for the code layout and conventions.
+The unit tests are in `EmusLinkTests/`. See [AGENTS.md](AGENTS.md) for the code layout and conventions.
 
 ## Screens
 
 - **Dashboard**: battery percentage with range, consumption and speed gauges, and tiles for power, average consumption, voltage, temperature and cells.
-- **Verbruik** (consumption): chart per km (last 30 km), averages for the trip / 10 km / 100 km, and starting a new trip.
-- **Instellingen** (settings): ABRP, GPS, module, diagnostics and log.
+- **Consumption**: consumption over the last 10, 25 or 50 km as a filled line (regeneration below zero), with the average and the projected range for that distance, plus averages for the trip / 10 km / 100 km and starting a new trip.
+- **Insights**: the most efficient speed (consumption per speed band of 10 km/h, with the range of speeds that is within 6 % of the lowest) and learning from trips (distance per day of the week: set, learned and measured, with the charge needed for tomorrow). Both fill up as you drive; the charge figure is advice only, the app does not control charging.
+- **Settings**: ABRP, GPS, module, diagnostics and log.
+
+## Languages
+
+English is the source language; Dutch is translated in `EmusLink/Localizable.xcstrings` (a String Catalog, editable in Xcode). The language can also be chosen per app in iOS Settings → EmusLink → Language. To add a language, see the Localization section in [AGENTS.md](AGENTS.md).
 
 ## CarPlay
 

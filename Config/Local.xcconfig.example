@@ -1,10 +1,10 @@
-// Kopieer naar Config/Local.xcconfig en vul in. Dat bestand komt niet in git.
-// Let op: in een xcconfig begint `//` een commentaar, ook midden in een waarde.
+// Copy to Config/Local.xcconfig and fill in. That file is not committed.
+// Note: in an xcconfig `//` starts a comment, even in the middle of a value.
 
 APP_BUNDLE_ID = com.example.emuslink
 DEVELOPMENT_TEAM = ABCDE12345
-DEFAULT_MODULE_NAME = MijnModule
+DEFAULT_MODULE_NAME = MyModule
 
-// Optioneel
+// Optional
 ABRP_API_KEY =
 ABRP_USER_TOKEN =

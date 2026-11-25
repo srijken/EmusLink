@@ -16,51 +16,51 @@ struct SettingsView: View {
         NavigationStack {
             Form {
                 Section {
-                    Toggle("Versturen naar ABRP", isOn: $abrpOn)
+                    Toggle("Send to ABRP", isOn: $abrpOn)
                         .onChange(of: abrpOn) { _, v in model.abrp.enabled = v }
-                    TextField("API key (van Iternio)", text: $apiKey)
+                    TextField("API key (from Iternio)", text: $apiKey)
                         .textInputAutocapitalization(.never).autocorrectionDisabled()
                         .font(.footnote.monospaced())
                     TextField("User token (ABRP → Live data)", text: $token)
                         .textInputAutocapitalization(.never).autocorrectionDisabled()
                         .font(.footnote.monospaced())
-                    Button(saved ? "Opgeslagen ✓" : "Opslaan") {
+                    Button(saved ? LocalizedStringKey("Saved ✓") : LocalizedStringKey("Save")) {
                         model.abrp.apiKey = apiKey
                         model.abrp.userToken = token
                         saved = true
                     }
-                    LabeledContent("Laatste resultaat", value: store.abrpResult)
+                    LabeledContent("Last result", value: store.abrpResult)
                     if let d = store.abrpLastSent {
-                        LabeledContent("Verstuurd om", value: d.formatted(date: .omitted, time: .standard))
+                        LabeledContent("Sent at", value: d.formatted(date: .omitted, time: .standard))
                     }
                 } header: { Text("ABRP") } footer: {
-                    Text("Houd een veld ingedrukt en kies Plak. Zet de ABRP-plugin op de OVMS uit (script eval abrp.send(0)), anders sturen ze allebei naar dezelfde auto.")
+                    Text("Touch and hold a field and choose Paste. Switch off the ABRP plugin on the OVMS (script eval abrp.send(0)), otherwise both send data for the same car.")
                 }
 
                 Section {
-                    Toggle("GPS gebruiken", isOn: $useLocation)
+                    Toggle("Use GPS", isOn: $useLocation)
                         .onChange(of: useLocation) { _, v in model.location.enabled = v }
-                } header: { Text("Locatie") } footer: {
-                    Text("Nodig voor snelheid, verbruik per km en de positie in ABRP. Kies bij de vraag van iOS voor ‘Altijd’, dan blijft het werken als de app op de achtergrond staat.")
+                } header: { Text("Location") } footer: {
+                    Text("Needed for speed, consumption per km and the position in ABRP. When iOS asks, choose ‘Always’ so it keeps working while the app is in the background.")
                 }
 
                 Section("Module") {
-                    LabeledContent("Status", value: store.connection.rawValue)
-                    LabeledContent("Naam", value: store.deviceName ?? "–")
-                    TextField("Zoeken op naam", text: $nameFilter)
+                    LabeledContent("Status", value: store.connection.label)
+                    LabeledContent("Name", value: store.deviceName ?? "–")
+                    TextField("Search by name", text: $nameFilter)
                         .textInputAutocapitalization(.never).autocorrectionDisabled()
                         .onSubmit { model.ble.nameFilter = nameFilter }
-                    Toggle("Actief pollen (experimenteel)", isOn: $polling)
+                    Toggle("Active polling (experimental)", isOn: $polling)
                         .onChange(of: polling) { _, v in model.ble.pollingEnabled = v }
-                    Button("Opnieuw zoeken / andere module", role: .destructive) { model.ble.forgetDevice() }
+                    Button("Search again / other module", role: .destructive) { model.ble.forgetDevice() }
                 }
 
-                Section("Diagnose") {
-                    LabeledContent("Notify", value: store.notifyOn ? "aan" : "uit")
-                    LabeledContent("Pakketten", value: "\(store.packets)")
-                    LabeledContent("Zinnen geldig / kapot", value: "\(store.validSentences) / \(store.invalidSentences)")
+                Section("Diagnostics") {
+                    LabeledContent("Notify", value: store.notifyOn ? String(localized: "on") : String(localized: "off"))
+                    LabeledContent("Packets", value: "\(store.packets)")
+                    LabeledContent("Sentences valid / broken", value: "\(store.validSentences) / \(store.invalidSentences)")
                     LabeledContent("Firmware", value: store.snapshot.firmware ?? "–")
-                    if let w = store.writeCharacteristic { LabeledContent("Schrijven via", value: w) }
+                    if let w = store.writeCharacteristic { LabeledContent("Writing via", value: w) }
                 }
 
                 Section("Log") {
@@ -69,7 +69,7 @@ struct SettingsView: View {
                     }
                 }
             }
-            .navigationTitle("Instellingen")
+            .navigationTitle("Settings")
         }
         .onAppear {
             apiKey = model.abrp.apiKey

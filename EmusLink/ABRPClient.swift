@@ -2,9 +2,9 @@ import Foundation
 import CoreLocation
 import UIKit
 
-/// Stuurt telemetrie naar de Telemetry API van ABRP (Iternio).
-/// Zelfde endpoint als de OVMS-plugin: GET https://api.iternio.com/1/tlm/send?api_key=…&token=…&tlm={json}
-/// `maybeSend` wordt op de Bluetooth-queue aangeroepen; het resultaat gaat naar de LiveStore.
+/// Sends telemetry to ABRP's Telemetry API (Iternio).
+/// Same endpoint as the OVMS plugin: GET https://api.iternio.com/1/tlm/send?api_key=…&token=…&tlm={json}
+/// `maybeSend` is called on the Bluetooth queue; the result goes to the LiveStore.
 final class ABRPClient {
     static let endpoint = "https://api.iternio.com/1/tlm/send"
 
@@ -14,7 +14,7 @@ final class ABRPClient {
     private let defaultAPIKey: String
     private let defaultUserToken: String
 
-    /// De standaardwaarden komen uit de build-configuratie en gelden tot er in de app iets is opgeslagen.
+    /// The defaults come from the build configuration and apply until something is saved in the app.
     init(defaults: UserDefaults = .standard,
          defaultAPIKey: String = AppConfig.abrpAPIKey,
          defaultUserToken: String = AppConfig.abrpUserToken) {
@@ -42,7 +42,7 @@ final class ABRPClient {
     private var lastSoc: Double?
     private var lastCharging: Bool?
 
-    /// Rijden/laden: elke 10 s. Stilstaan: elke 5 min, of meteen als SoC of laadstatus verandert.
+    /// Driving/charging: every 10 s. Parked: every 5 min, or right away when the SoC or charging state changes.
     func maybeSend(_ snap: BMSSnapshot, location: CLLocation?, now: Date = Date()) {
         guard enabled, !apiKey.isEmpty, !userToken.isEmpty, let soc = snap.soc else { return }
 
@@ -65,7 +65,7 @@ final class ABRPClient {
                                  telemetry: Self.telemetry(snap, soc: soc, location: recentLoc, now: now))
         else { finish(nil); return }
 
-        // Even extra tijd vragen, zodat de request afloopt als iOS de app weer laat slapen.
+        // Ask for some extra time, so the request can finish when iOS suspends the app again.
         var task: UIBackgroundTaskIdentifier = .invalid
         task = UIApplication.shared.beginBackgroundTask(withName: "abrp") {
             UIApplication.shared.endBackgroundTask(task)
@@ -74,19 +74,21 @@ final class ABRPClient {
             let code = (response as? HTTPURLResponse)?.statusCode ?? 0
             let body = data.flatMap { String(data: $0, encoding: .utf8) } ?? ""
             let result: String
+            var ok = false
             if let error {
-                result = "Fout: \(error.localizedDescription)"
+                result = String(localized: "Error: \(error.localizedDescription)")
             } else if code == 200, body.contains("\"ok\"") {
                 result = "OK (SoC \(String(format: "%.1f", soc)) %)"
+                ok = true
             } else {
                 result = "HTTP \(code): \(body.prefix(120))"
             }
-            self?.finish(result, sentAt: now)
+            self?.finish(result, ok: ok, sentAt: now)
             UIApplication.shared.endBackgroundTask(task)
         }.resume()
     }
 
-    /// De velden die naar ABRP gaan. `location` moet al op versheid gecontroleerd zijn.
+    /// The fields sent to ABRP. `location` must already have been checked for freshness.
     static func telemetry(_ snap: BMSSnapshot, soc: Double, location: CLLocation?, now: Date) -> [String: Any] {
         let speedKmh = max(0, (location?.speed ?? -1) * 3.6)
         var tlm: [String: Any] = [
@@ -96,7 +98,7 @@ final class ABRPClient {
         ]
         if let p = snap.powerKW { tlm["power"] = (p * 100).rounded() / 100 }
         if let v = snap.packVoltage { tlm["voltage"] = v }
-        if let i = snap.current { tlm["current"] = -i }          // ABRP: + = ontladen
+        if let i = snap.current { tlm["current"] = -i }          // ABRP: + = discharging
         if let h = snap.soh { tlm["soh"] = h }
         if let t = snap.tempAvg { tlm["batt_temp"] = t }
         if let loc = location, loc.horizontalAccuracy >= 0 {
@@ -118,16 +120,17 @@ final class ABRPClient {
             URLQueryItem(name: "token", value: token),
             URLQueryItem(name: "tlm", value: jsonText),
         ]
-        // '+' wordt door URLComponents niet ge-escaped; de server leest dat als spatie.
+        // URLComponents does not escape '+'; the server reads it as a space.
         comps.percentEncodedQuery = comps.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
         return comps.url
     }
 
-    private func finish(_ result: String?, sentAt: Date? = nil) {
+    private func finish(_ result: String?, ok: Bool = false, sentAt: Date? = nil) {
         lock.lock(); inFlight = false; lock.unlock()
         guard let result else { return }
         DispatchQueue.main.async { [weak store] in
             store?.abrpResult = result
+            store?.abrpOK = ok
             store?.abrpLastSent = sentAt
         }
     }

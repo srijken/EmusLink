@@ -16,15 +16,15 @@ final class ABRPClientTests: XCTestCase {
                    horizontalAccuracy: accuracy, verticalAccuracy: 5, course: 0, speed: speed, timestamp: now)
     }
 
-    // MARK: - Telemetrie
+    // MARK: - Telemetry
 
     func testTelemetryWhileDriving() {
         let tlm = ABRPClient.telemetry(snapshot(current: -20), soc: 60.79, location: location(speed: 25), now: now)
         XCTAssertEqual(tlm["utc"] as? Int, 1_800_000_000)
         XCTAssertEqual(tlm["soc"] as? Double, 60.8)
         XCTAssertEqual(tlm["is_charging"] as? Int, 0)
-        XCTAssertEqual(tlm["power"] as? Double, 7.44, "ABRP: positief = verbruik")
-        XCTAssertEqual(tlm["current"] as? Double, 20, "ABRP: positief = ontladen")
+        XCTAssertEqual(tlm["power"] as? Double, 7.44, "ABRP: positive = consumption")
+        XCTAssertEqual(tlm["current"] as? Double, 20, "ABRP: positive = discharging")
         XCTAssertEqual(tlm["voltage"] as? Double, 372)
         XCTAssertEqual(tlm["soh"] as? Double, 100)
         XCTAssertEqual(tlm["batt_temp"] as? Double, 16)
@@ -40,7 +40,7 @@ final class ABRPClientTests: XCTestCase {
         XCTAssertEqual(tlm["is_charging"] as? Int, 1)
         XCTAssertEqual(tlm["power"] as? Double, -11.16)
         XCTAssertEqual(tlm["current"] as? Double, -30)
-        XCTAssertEqual(tlm["is_parked"] as? Int, 0, "laden is niet geparkeerd")
+        XCTAssertEqual(tlm["is_parked"] as? Int, 0, "charging is not parked")
     }
 
     func testTelemetryParked() {
@@ -78,7 +78,7 @@ final class ABRPClientTests: XCTestCase {
         XCTAssertEqual(tlm["soc"] as? Double, 60.8)
     }
 
-    /// Een '+' in het token moet %2B worden, anders leest de server een spatie.
+    /// A '+' in the token must become %2B, otherwise the server reads a space.
     func testPlusSignIsEscaped() throws {
         let url = try XCTUnwrap(ABRPClient.url(apiKey: "a+b", token: "c+d/e=", telemetry: ["soc": 1]))
         let query = try XCTUnwrap(url.query(percentEncoded: true))
@@ -87,7 +87,7 @@ final class ABRPClientTests: XCTestCase {
         XCTAssertTrue(query.contains("token=c%2Bd"))
     }
 
-    // MARK: - Instellingen
+    // MARK: - Settings
 
     func testSettingsAreTrimmedAndStored() {
         let suite = "EmusLinkTests.\(UUID().uuidString)"
@@ -97,13 +97,13 @@ final class ABRPClientTests: XCTestCase {
         let client = ABRPClient(defaults: defaults, defaultAPIKey: "", defaultUserToken: "")
         XCTAssertEqual(client.apiKey, "")
         XCTAssertEqual(client.userToken, "")
-        XCTAssertTrue(client.enabled, "standaard aan")
+        XCTAssertTrue(client.enabled, "on by default")
 
         client.apiKey = "  key-123\n"
         client.userToken = " tok-456 "
         client.enabled = false
         let again = ABRPClient(defaults: defaults, defaultAPIKey: "build-key", defaultUserToken: "build-token")
-        XCTAssertEqual(again.apiKey, "key-123", "opgeslagen waarde gaat voor de build-configuratie")
+        XCTAssertEqual(again.apiKey, "key-123", "a saved value wins over the build configuration")
         XCTAssertEqual(again.userToken, "tok-456")
         XCTAssertFalse(again.enabled)
     }
@@ -116,7 +116,7 @@ final class ABRPClientTests: XCTestCase {
         let client = ABRPClient(defaults: defaults, defaultAPIKey: "build-key", defaultUserToken: "build-token")
         XCTAssertEqual(client.apiKey, "build-key")
         XCTAssertEqual(client.userToken, "build-token")
-        client.apiKey = ""                                  // bewust leeggemaakt in de app
+        client.apiKey = ""                                  // deliberately cleared in the app
         XCTAssertEqual(client.apiKey, "")
     }
 }

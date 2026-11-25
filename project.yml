@@ -1,9 +1,10 @@
 name: EmusLink
 options:
+  developmentLanguage: en
   deploymentTarget:
     iOS: "17.0"
-# Persoonlijke instellingen (team, bundle-ID, naam van de module) staan in
-# Config/Local.xcconfig, zie Config/Local.xcconfig.example.
+# Personal settings (team, bundle ID, module name) live in
+# Config/Local.xcconfig, see Config/Local.xcconfig.example.
 configFiles:
   Debug: Config/Shared.xcconfig
   Release: Config/Shared.xcconfig
@@ -26,23 +27,26 @@ targets:
         SWIFT_VERSION: "5.0"
         TARGETED_DEVICE_FAMILY: "1"
         CODE_SIGN_STYLE: Automatic
-        # CarPlay-entitlement alleen in de simulator. Op de iPhone pas als Apple
-        # de "Driving Task"-entitlement voor je account heeft goedgekeurd:
-        # haal dan de [sdk=...]-beperking weg.
+        SWIFT_EMIT_LOC_STRINGS: YES
+        LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+        # CarPlay entitlement in the simulator only. On an iPhone it only works once
+        # Apple has approved the "Driving Task" entitlement for your account:
+        # then remove the [sdk=...] restriction.
         "CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]": EmusLink/CarPlay.entitlements
     info:
       path: EmusLink/Info.plist
       properties:
         CFBundleDisplayName: EmusLink
+        CFBundleLocalizations: [en, nl]
         EmusDefaultModuleName: $(DEFAULT_MODULE_NAME)
         ABRPDefaultAPIKey: $(ABRP_API_KEY)
         ABRPDefaultUserToken: $(ABRP_USER_TOKEN)
         UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         UIBackgroundModes: [bluetooth-central, location]
-        NSBluetoothAlwaysUsageDescription: "EmusLink leest de accudata van de EMUS BMS via Bluetooth."
-        NSLocationWhenInUseUsageDescription: "Snelheid en afstand voor het verbruik per km, en de positie voor ABRP."
-        NSLocationAlwaysAndWhenInUseUsageDescription: "Ook op de achtergrond verbruik bijhouden en de positie naar ABRP sturen."
+        NSBluetoothAlwaysUsageDescription: "EmusLink reads the battery data from the EMUS BMS over Bluetooth."
+        NSLocationWhenInUseUsageDescription: "Speed and distance for the consumption per km, and the position for ABRP."
+        NSLocationAlwaysAndWhenInUseUsageDescription: "Keep tracking consumption and sending the position to ABRP in the background."
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: true
           UISceneConfigurations:

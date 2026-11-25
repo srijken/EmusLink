@@ -1,7 +1,7 @@
 import Foundation
 
-/// Standaardwaarden uit de build-configuratie (`Config/*.xcconfig` → Info.plist).
-/// Zo staan persoonlijke instellingen niet in de broncode.
+/// Default values from the build configuration (`Config/*.xcconfig` → Info.plist).
+/// This keeps personal settings out of the source code.
 enum AppConfig {
     static let bundleID = Bundle.main.bundleIdentifier ?? "emuslink"
     static let defaultModuleName = string("EmusDefaultModuleName")

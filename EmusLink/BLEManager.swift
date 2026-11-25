@@ -1,20 +1,20 @@
 import Foundation
 import CoreBluetooth
 
-/// Verbindt met de EMUS Smartphone Module en houdt de verbinding ook op de achtergrond vast.
-/// Alle Bluetooth-verwerking gebeurt op een eigen queue; het scherm krijgt max. 2× per seconde een update.
+/// Connects to the EMUS Smartphone Module and keeps the connection alive in the background too.
+/// All Bluetooth processing happens on its own queue; the UI gets an update at most twice per second.
 final class BLEManager: NSObject {
 
     static let serviceUUID = CBUUID(string: "BB460001-4A8B-AA9D-E511-9A19C681CA6B")
     static let notifyUUID  = CBUUID(string: "BB460002-4A8B-AA9D-E511-9A19C681CA6B")
-    // LET OP: BB460004 is de naam-instelling van de module (schrijven hernoemt hem!)
-    // en BB460005 is vermoedelijk ook configuratie. Alleen 0003 komt in aanmerking.
+    // CAREFUL: BB460004 is the module's name setting (writing to it renames the module!)
+    // and BB460005 is probably configuration as well. Only 0003 may be written to.
     static let writeUUID   = CBUUID(string: "BB460003-4A8B-AA9D-E511-9A19C681CA6B")
 
     let queue = DispatchQueue(label: "\(AppConfig.bundleID).ble", qos: .userInitiated)
     weak var store: LiveStore?
 
-    /// Na elke geldige zin, op `queue` (ook op de achtergrond).
+    /// After every valid sentence, on `queue` (also in the background).
     var onSentence: ((BMSSnapshot, String) -> Void)?
 
     private var central: CBCentralManager?
@@ -22,13 +22,13 @@ final class BLEManager: NSObject {
     private var writeChar: CBCharacteristic?
     private let assembler = SentenceAssembler()
 
-    // Alleen op `queue` aanraken:
+    // Only touch on `queue`:
     private var snapshot = BMSSnapshot()
     private var packets = 0, valid = 0, invalid = 0
     private var notifyOn = false
     private var lastPublish = Date.distantPast
 
-    // Pollen (standaard uit; de EMUS zendt ook uit zichzelf).
+    // Polling (off by default; the EMUS also broadcasts on its own).
     private let pollSequence = ["BC1", "CV1", "BT3", "BV1"]
     private var pollIndex = 0
     private var lastPoll = Date.distantPast
@@ -47,7 +47,7 @@ final class BLEManager: NSObject {
         set { defaults.set(newValue, forKey: "pollingEnabled") }
     }
 
-    /// Moet bij het starten van de app gebeuren, zodat iOS de verbinding kan herstellen.
+    /// Must happen at app launch, so iOS can restore the connection.
     func start() {
         central = CBCentralManager(delegate: self, queue: queue, options: [
             CBCentralManagerOptionRestoreIdentifierKey: "\(AppConfig.bundleID).central",
@@ -55,14 +55,14 @@ final class BLEManager: NSObject {
         ])
     }
 
-    /// Is dit de module? Op de EMUS-service, of op (een deel van) de naam als die is ingesteld.
+    /// Is this the module? By the EMUS service, or by (part of) the name if one is set.
     static func matches(name: String, services: [CBUUID], nameFilter: String) -> Bool {
         let filter = nameFilter.trimmingCharacters(in: .whitespaces)
         return services.contains(serviceUUID)
             || (!filter.isEmpty && name.localizedCaseInsensitiveContains(filter))
     }
 
-    // MARK: - Bediening (vanaf het scherm)
+    // MARK: - Controls (from the UI)
 
     func reconnect() { queue.async { self.startConnecting() } }
 
@@ -75,7 +75,7 @@ final class BLEManager: NSObject {
         }
     }
 
-    // MARK: - Intern (op queue)
+    // MARK: - Internal (on queue)
 
     private func startConnecting() {
         guard let central, central.state == .poweredOn else { return }
@@ -89,7 +89,8 @@ final class BLEManager: NSObject {
         }
         setConnection(.scanning)
         central.scanForPeripherals(withServices: nil, options: nil)
-        log(nameFilter.isEmpty ? "Zoeken naar EMUS-module" : "Zoeken naar '\(nameFilter)'")
+        log(nameFilter.isEmpty ? String(localized: "Searching for EMUS module")
+                                : String(localized: "Searching for '\(nameFilter)'"))
     }
 
     private func connect(_ p: CBPeripheral) {
@@ -97,7 +98,7 @@ final class BLEManager: NSObject {
         peripheral = p
         p.delegate = self
         setConnection(.connecting, name: p.name)
-        central?.connect(p, options: nil)   // geen time-out: verbindt zodra de module in bereik is
+        central?.connect(p, options: nil)   // no timeout: connects as soon as the module is in range
     }
 
     private func handle(_ data: Data) {
@@ -157,7 +158,7 @@ extension BLEManager: CBCentralManagerDelegate {
         if let restored = (dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral])?.first {
             peripheral = restored
             restored.delegate = self
-            log("Hersteld door iOS")
+            log(String(localized: "Restored by iOS"))
         }
     }
 
@@ -180,7 +181,7 @@ extension BLEManager: CBCentralManagerDelegate {
         let name = p.name ?? (advertisementData[CBAdvertisementDataLocalNameKey] as? String) ?? ""
         let services = advertisementData[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID] ?? []
         guard Self.matches(name: name, services: services, nameFilter: nameFilter) else { return }
-        log("Gevonden: \(name)")
+        log(String(localized: "Found: \(name)"))
         connect(p)
     }
 
@@ -189,17 +190,17 @@ extension BLEManager: CBCentralManagerDelegate {
         assembler.reset()
         packets = 0; valid = 0; invalid = 0; notifyOn = false
         setConnection(.connected, name: p.name)
-        log("Verbonden met \(p.name ?? "module")")
+        log(String(localized: "Connected to \(p.name ?? "EMUS")"))
         p.discoverServices([Self.serviceUUID])
     }
 
     func centralManager(_ central: CBCentralManager, didFailToConnect p: CBPeripheral, error: Error?) {
-        log("Verbinden mislukt: \(error?.localizedDescription ?? "-")")
+        log(String(localized: "Connecting failed: \(error?.localizedDescription ?? "-")"))
         connect(p)
     }
 
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral p: CBPeripheral, error: Error?) {
-        log("Verbinding weg\(error.map { ": \($0.localizedDescription)" } ?? "")")
+        log(String(localized: "Connection lost") + (error.map { ": \($0.localizedDescription)" } ?? ""))
         notifyOn = false
         publishIfDue(force: true)
         connect(p)
@@ -211,15 +212,15 @@ extension BLEManager: CBCentralManagerDelegate {
 extension BLEManager: CBPeripheralDelegate {
 
     func peripheral(_ p: CBPeripheral, didDiscoverServices error: Error?) {
-        if let error { log("Services-fout: \(error.localizedDescription)") }
+        if let error { log(String(localized: "Services error: \(error.localizedDescription)")) }
         guard let service = p.services?.first(where: { $0.uuid == Self.serviceUUID }) else {
-            log("EMUS-service niet gevonden"); return
+            log(String(localized: "EMUS service not found")); return
         }
         p.discoverCharacteristics([Self.notifyUUID, Self.writeUUID], for: service)
     }
 
     func peripheral(_ p: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
-        if let error { log("Characteristics-fout: \(error.localizedDescription)") }
+        if let error { log(String(localized: "Characteristics error: \(error.localizedDescription)")) }
         let chars = service.characteristics ?? []
         if let n = chars.first(where: { $0.uuid == Self.notifyUUID }) {
             p.setNotifyValue(true, for: n)
@@ -231,10 +232,10 @@ extension BLEManager: CBPeripheralDelegate {
 
     func peripheral(_ p: CBPeripheral, didUpdateNotificationStateFor c: CBCharacteristic, error: Error?) {
         if let error {
-            log("Notify-fout: \(error.localizedDescription)")
+            log(String(localized: "Notify error: \(error.localizedDescription)"))
         } else {
             notifyOn = c.isNotifying
-            log("Notify \(c.isNotifying ? "aan" : "uit")")
+            log(c.isNotifying ? String(localized: "Notify on") : String(localized: "Notify off"))
             publishIfDue(force: true)
         }
     }

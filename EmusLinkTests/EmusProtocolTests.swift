@@ -3,7 +3,7 @@ import XCTest
 
 final class EmusProtocolTests: XCTestCase {
 
-    /// Zin met een kloppende CRC erachter.
+    /// Sentence followed by a correct CRC.
     private func sentence(_ body: String) -> String {
         body + "," + String(format: "%02X", EmusProtocol.crc8(body + ","))
     }
@@ -12,9 +12,9 @@ final class EmusProtocolTests: XCTestCase {
         body.split(separator: ",", omittingEmptySubsequences: false).map(String.init)
     }
 
-    // MARK: - CRC en zinnen
+    // MARK: - CRC and sentences
 
-    /// De verzoeken uit de logs van 22-11-2026 (zie README).
+    /// The requests from the logs of 22 November 2026 (see README).
     func testRequestsMatchLoggedSentences() {
         let expected = ["BC1": "E1", "VR1": "D7", "CV1": "78", "BV1": "4F", "BT3": "CB"]
         for (id, crc) in expected {
@@ -28,12 +28,12 @@ final class EmusProtocolTests: XCTestCase {
     }
 
     func testValidateRejectsDamagedSentences() {
-        XCTAssertNil(EmusProtocol.validate("BC1,?,E2"), "verkeerde CRC")
-        XCTAssertNil(EmusProtocol.validate("BC1,!,E1"), "inhoud beschadigd")
-        XCTAssertNil(EmusProtocol.validate("BC1,?,E"), "CRC te kort")
-        XCTAssertNil(EmusProtocol.validate("BC1,?,E1A"), "CRC te lang")
-        XCTAssertNil(EmusProtocol.validate("BC1,?,ZZ"), "CRC geen hex")
-        XCTAssertNil(EmusProtocol.validate("BC1"), "geen komma")
+        XCTAssertNil(EmusProtocol.validate("BC1,?,E2"), "wrong CRC")
+        XCTAssertNil(EmusProtocol.validate("BC1,!,E1"), "content damaged")
+        XCTAssertNil(EmusProtocol.validate("BC1,?,E"), "CRC too short")
+        XCTAssertNil(EmusProtocol.validate("BC1,?,E1A"), "CRC too long")
+        XCTAssertNil(EmusProtocol.validate("BC1,?,ZZ"), "CRC not hex")
+        XCTAssertNil(EmusProtocol.validate("BC1"), "no comma")
         XCTAssertNil(EmusProtocol.validate(""))
     }
 
@@ -76,7 +76,7 @@ final class EmusProtocolTests: XCTestCase {
 
     func testCV1DischargeIsNegativeCurrentAndPositivePower() {
         var s = BMSSnapshot()
-        s.apply(fields("CV1,9150,FF38"))            // 372,00 V, −20,0 A
+        s.apply(fields("CV1,9150,FF38"))            // 372.00 V, −20.0 A
         XCTAssertEqual(s.packVoltage!, 372, accuracy: 1e-9)
         XCTAssertEqual(s.current!, -20, accuracy: 1e-9)
         XCTAssertEqual(s.powerKW!, 7.44, accuracy: 1e-9)
@@ -85,7 +85,7 @@ final class EmusProtocolTests: XCTestCase {
 
     func testCV1ChargingIsPositiveCurrentAndNegativePower() {
         var s = BMSSnapshot()
-        s.apply(fields("CV1,9150,00C8"))            // +20,0 A
+        s.apply(fields("CV1,9150,00C8"))            // +20.0 A
         XCTAssertEqual(s.current!, 20, accuracy: 1e-9)
         XCTAssertEqual(s.powerKW!, -7.44, accuracy: 1e-9)
         XCTAssertTrue(s.isCharging)
@@ -93,7 +93,7 @@ final class EmusProtocolTests: XCTestCase {
 
     func testSmallChargeCurrentIsNotCharging() {
         var s = BMSSnapshot()
-        s.apply(fields("CV1,9150,000A"))            // +1,0 A: nog geen laden
+        s.apply(fields("CV1,9150,000A"))            // +1.0 A: not charging yet
         XCTAssertFalse(s.isCharging)
     }
 
@@ -104,7 +104,7 @@ final class EmusProtocolTests: XCTestCase {
         XCTAssertEqual(s.cellMin!, 3.86, accuracy: 1e-9)
         XCTAssertEqual(s.cellMax!, 3.89, accuracy: 1e-9)
         XCTAssertEqual(s.cellAvg!, 3.88, accuracy: 1e-9)
-        XCTAssertEqual(s.packVoltage!, 372, accuracy: 1e-9, "packspanning uit BV1 als CV1 er nog niet is")
+        XCTAssertEqual(s.packVoltage!, 372, accuracy: 1e-9, "pack voltage from BV1 while CV1 has not arrived yet")
     }
 
     func testBV1DoesNotOverwritePackVoltageFromCV1() {

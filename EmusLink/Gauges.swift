@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Boogmeter van 270°. Vult vanaf `zero`, dus kan ook naar beneden uitslaan (regen).
+/// 270° arc gauge. Fills from `zero`, so it can also swing downwards (regeneration).
 struct ArcGauge: View {
     var value: Double?
     var range: ClosedRange<Double>
@@ -45,9 +45,9 @@ struct ArcGauge: View {
     }
 }
 
-/// Meter met grote waarde in het midden.
+/// Gauge with a large value in the centre.
 struct GaugeCard: View {
-    var title: String
+    var title: LocalizedStringKey
     var value: Double?
     var format: String
     var unit: String
@@ -81,7 +81,7 @@ struct GaugeCard: View {
 }
 
 struct StatTile: View {
-    var title: String
+    var title: LocalizedStringKey
     var value: String
     var unit: String = ""
     var detail: String? = nil

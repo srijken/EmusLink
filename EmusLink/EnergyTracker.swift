@@ -1,16 +1,17 @@
 import Foundation
 import CoreLocation
 
-/// Eén stukje van ~100 m rijden met de energie die daarbij uit de accu ging.
+/// One stretch of ~100 m of driving with the energy it took from the battery.
 struct EnergySegment: Codable {
     var t: Date
     var km: Double
     var wh: Double
 }
 
-struct KmPoint: Identifiable {
-    let id: Int          // 0 = meest recente km
-    let kmAgo: Double
+/// One point of the consumption chart: the average over a short stretch of road.
+struct ConsumptionPoint: Identifiable, Equatable {
+    let id: Int          // 0 = most recent
+    let kmAgo: Double    // distance from now to the middle of the stretch
     let whPerKm: Double
 }
 
@@ -23,16 +24,17 @@ struct EnergySummary {
     var last100WhPerKm: Double?
     var instantWhPerKm: Double?
     var powerKW: Double = 0
-    var perKm: [KmPoint] = []
+    /// The most recent segments (oldest first), enough for the longest chart range.
+    var recent: [EnergySegment] = []
     var historyKm: Double = 0
 }
 
-/// Berekent het verbruik: energie = ∫ U·I dt (uit de BMS), afstand = GPS.
-/// Thread-safe: vermogen komt van de Bluetooth-queue, posities van de main thread.
+/// Calculates consumption: energy = ∫ U·I dt (from the BMS), distance = GPS.
+/// Thread-safe: power arrives on the Bluetooth queue, locations on the main thread.
 final class EnergyTracker {
     private let lock = NSLock()
     private let segmentKm = 0.1
-    private let maxSegments = 1000          // 1000 × 0,1 km = 100 km historie
+    private let maxSegments = 1000          // 1000 × 0.1 km = 100 km of history
     private let tripGap: TimeInterval = 30 * 60
 
     private var segments: [EnergySegment] = []
@@ -57,46 +59,53 @@ final class EnergyTracker {
         var lastMove: Date
     }
 
-    /// `defaults` is te vervangen in tests, zodat die de echte historie niet raken.
+    /// `defaults` can be replaced in tests, so they do not touch the real history.
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         load()
     }
 
-    // MARK: - Invoer
+    // MARK: - Input
 
-    /// Vermogen uit de accu in watt (positief = verbruik, negatief = regen/laden).
-    func addPower(watts: Double, charging: Bool, at t: Date = Date()) {
+    /// Power drawn from the battery in watts (positive = consumption, negative = regeneration/charging).
+    /// Returns what was added, with the speed at that moment; nil if nothing was counted.
+    @discardableResult
+    func addPower(watts: Double, charging: Bool, at t: Date = Date()) -> EnergySample? {
         lock.lock(); defer { lock.unlock() }
         powerW = watts
         defer { lastPower = (t, watts) }
-        guard let p = lastPower else { return }
+        guard let p = lastPower else { return nil }
         let dt = t.timeIntervalSince(p.t)
-        guard dt > 0, dt <= 5 else { return }                 // gat in de data: niet bijtellen
-        if charging && currentSpeed(at: t) < 1 { return }      // laden aan de paal telt niet mee
+        guard dt > 0, dt <= 5 else { return nil }                 // gap in the data: do not add
+        let speed = currentSpeed(at: t)
+        if charging && speed < 1 { return nil }      // charging at a charger does not count
         let wh = (p.w + watts) / 2 * dt / 3600
         segWh += wh
         if tripStart != nil { tripWh += wh }
+        return EnergySample(wh: wh, km: speed * dt / 3600, speedKmh: speed)
     }
 
-    func addLocation(_ loc: CLLocation, now: Date = Date()) {
+    /// Returns the kilometres that were counted (0 if the fix was ignored).
+    @discardableResult
+    func addLocation(_ loc: CLLocation, now: Date = Date()) -> Double {
         lock.lock(); defer { lock.unlock() }
-        guard loc.horizontalAccuracy >= 0, loc.horizontalAccuracy <= 30 else { return }
+        guard loc.horizontalAccuracy >= 0, loc.horizontalAccuracy <= 30 else { return 0 }
         if loc.speed >= 0 { speedKmh = loc.speed * 3.6; lastSpeedTime = loc.timestamp }
         defer { lastFix = loc }
-        guard let prev = lastFix else { return }
+        guard let prev = lastFix else { return 0 }
         let dt = loc.timestamp.timeIntervalSince(prev.timestamp)
-        guard dt > 0, dt < 30 else { return }
+        guard dt > 0, dt < 30 else { return 0 }
         let km = loc.distance(from: prev) / 1000
-        guard km / (dt / 3600) < 200 else { return }          // GPS-sprong
-        guard speedKmh > 2 || km > 0.01 else { return }       // stilstaan: GPS-ruis negeren
-        // Alleen kilometers tellen als er verse BMS-data is: anders ligt de telefoon
-        // niet in de Defender (fiets, andere auto) en kloppen de gemiddelden niet meer.
-        guard let p = lastPower, now.timeIntervalSince(p.t) < 10 else { return }
+        guard km / (dt / 3600) < 200 else { return 0 }          // GPS jump
+        guard speedKmh > 2 || km > 0.01 else { return 0 }       // standing still: ignore GPS noise
+        // Only count kilometres while there is fresh BMS data: otherwise the phone is
+        // not in the car (bicycle, another car) and the averages would be wrong.
+        guard let p = lastPower, now.timeIntervalSince(p.t) < 10 else { return 0 }
         addDistanceLocked(km, at: loc.timestamp)
+        return km
     }
 
-    /// Voor de demo-modus in de simulator.
+    /// For the demo mode in the simulator.
     func addDistance(km: Double, speedKmh s: Double, at t: Date = Date()) {
         lock.lock(); defer { lock.unlock() }
         speedKmh = s; lastSpeedTime = t
@@ -116,7 +125,7 @@ final class EnergyTracker {
         save()
     }
 
-    // MARK: - Uitvoer
+    // MARK: - Output
 
     func summary(at now: Date = Date()) -> EnergySummary {
         lock.lock(); defer { lock.unlock() }
@@ -132,22 +141,43 @@ final class EnergyTracker {
         s.instantWhPerKm = v > 5 ? powerW / v : nil           // W ÷ km/h = Wh/km
         s.historyKm = segments.reduce(0) { $0 + $1.km }
 
-        // Per km, de laatste 30 km (nieuwste eerst).
-        var points: [KmPoint] = []
-        var km = 0.0, wh = 0.0, kmAgo = 0.0
-        for seg in segments.reversed() {
-            km += seg.km; wh += seg.wh
-            if km >= 1 {
-                points.append(KmPoint(id: points.count, kmAgo: kmAgo, whPerKm: wh / km))
-                kmAgo += km; km = 0; wh = 0
-                if points.count == 30 { break }
-            }
-        }
-        s.perKm = points
+        s.recent = Array(segments.suffix(Self.chartSegments))
         return s
     }
 
-    // MARK: - Intern (met lock)
+    // MARK: - Chart
+
+    /// Longest range the chart can show, in km.
+    static let maxChartKm = 50.0
+    private static let chartSegments = 500          // 500 × ≥0.1 km ≥ 50 km
+
+    /// The consumption curve over the last `rangeKm`, newest first, averaged per `bucketKm`
+    /// so the line stays readable. `segments` are oldest first.
+    static func curve(segments: [EnergySegment], rangeKm: Double, bucketKm: Double) -> [ConsumptionPoint] {
+        var points: [ConsumptionPoint] = []
+        var km = 0.0, wh = 0.0, kmAgo = 0.0
+        for seg in segments.reversed() {
+            if kmAgo + km >= rangeKm { break }
+            km += seg.km; wh += seg.wh
+            if km >= bucketKm - 1e-9 {
+                points.append(ConsumptionPoint(id: points.count, kmAgo: kmAgo + km / 2, whPerKm: wh / km))
+                kmAgo += km; km = 0; wh = 0
+            }
+        }
+        return points
+    }
+
+    /// Average consumption over the last `rangeKm` of `segments`, or nil below `minimumKm`.
+    static func average(segments: [EnergySegment], rangeKm: Double, minimumKm: Double = 0.5) -> Double? {
+        var km = 0.0, wh = 0.0
+        for seg in segments.reversed() {
+            if km >= rangeKm { break }
+            km += seg.km; wh += seg.wh
+        }
+        return km >= minimumKm ? wh / km : nil
+    }
+
+    // MARK: - Internal (lock held)
 
     private func currentSpeed(at t: Date) -> Double {
         t.timeIntervalSince(lastSpeedTime) < 10 ? speedKmh : 0
@@ -155,7 +185,7 @@ final class EnergyTracker {
 
     private func addDistanceLocked(_ km: Double, at t: Date) {
         if t.timeIntervalSince(lastMove) > tripGap {
-            // Lang stilgestaan: nieuwe rit, en energie van het stilstaan (kachel e.d.) niet meetellen.
+            // Parked for a long time: new trip, and do not count the energy used while parked (heater etc.).
             tripKm = 0; tripWh = 0; tripStart = t
             segWh = 0; segKm = 0
         }

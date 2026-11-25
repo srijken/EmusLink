@@ -15,7 +15,7 @@ final class BLEManagerTests: XCTestCase {
         XCTAssertFalse(BLEManager.matches(name: "Koptelefoon", services: [other], nameFilter: "MijnModule"))
     }
 
-    /// Zonder ingestelde naam mag niet elk Bluetooth-apparaat in de buurt matchen.
+    /// Without a name set, not every nearby Bluetooth device may match.
     func testEmptyNameFilterMatchesNothing() {
         XCTAssertFalse(BLEManager.matches(name: "Koptelefoon", services: [other], nameFilter: ""))
         XCTAssertFalse(BLEManager.matches(name: "Koptelefoon", services: [], nameFilter: "  "))

@@ -2,7 +2,7 @@ import SwiftUI
 
 @main
 struct EmusLinkApp: App {
-    // Wordt ook aangemaakt als iOS de app op de achtergrond start voor Bluetooth.
+    // Also created when iOS launches the app in the background for Bluetooth.
     private let model = AppModel.shared
 
     var body: some Scene {
@@ -11,9 +11,11 @@ struct EmusLinkApp: App {
                 DashboardView()
                     .tabItem { Label("Dashboard", systemImage: "gauge.with.dots.needle.67percent") }
                 ConsumptionView()
-                    .tabItem { Label("Verbruik", systemImage: "chart.bar.xaxis") }
+                    .tabItem { Label("Consumption", systemImage: "chart.bar.xaxis") }
+                InsightsView()
+                    .tabItem { Label("Insights", systemImage: "lightbulb") }
                 SettingsView()
-                    .tabItem { Label("Instellingen", systemImage: "gearshape") }
+                    .tabItem { Label("Settings", systemImage: "gearshape") }
             }
             .environmentObject(model.store)
             .preferredColorScheme(.dark)

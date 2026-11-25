@@ -1,16 +1,16 @@
 import Foundation
 import CoreLocation
 
-/// GPS van de telefoon: voor snelheid, verbruik per km en de positie in ABRP.
+/// The phone's GPS: for speed, consumption per km and the position in ABRP.
 final class LocationProvider: NSObject, CLLocationManagerDelegate {
     private let manager = CLLocationManager()
     private let lock = NSLock()
     private var _latest: CLLocation?
 
-    /// Op de main thread, bij elke nieuwe positie.
+    /// On the main thread, for every new location.
     var onLocation: ((CLLocation) -> Void)?
 
-    /// Veilig vanaf elke thread.
+    /// Safe from any thread.
     var latest: CLLocation? { lock.lock(); defer { lock.unlock() }; return _latest }
 
     var enabled: Bool {

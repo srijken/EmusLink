@@ -1,16 +1,22 @@
 import Foundation
 import CoreLocation
 
-enum ConnectionState: String {
-    case off = "Bluetooth uit"
-    case idle = "Niet verbonden"
-    case scanning = "Zoeken…"
-    case connecting = "Verbinden…"
-    case connected = "Verbonden"
+enum ConnectionState {
+    case off, idle, scanning, connecting, connected
+
+    var label: String {
+        switch self {
+        case .off: String(localized: "Bluetooth off")
+        case .idle: String(localized: "Not connected")
+        case .scanning: String(localized: "Searching…")
+        case .connecting: String(localized: "Connecting…")
+        case .connected: String(localized: "Connected")
+        }
+    }
 }
 
-/// Alles wat de schermen tonen. Wordt alleen op de main thread bijgewerkt,
-/// en hooguit een paar keer per seconde, zodat de app soepel blijft.
+/// Everything the screens show. Only updated on the main thread,
+/// and at most a few times per second, so the app stays smooth.
 final class LiveStore: ObservableObject {
     @Published var snapshot = BMSSnapshot()
     @Published var connection: ConnectionState = .idle
@@ -22,7 +28,11 @@ final class LiveStore: ObservableObject {
     @Published var writeCharacteristic: String?
     @Published var log: [String] = []
     @Published var energy = EnergySummary()
-    @Published var abrpResult = "Nog niets verstuurd"
+    @Published var speedProfile = SpeedSummary()
+    @Published var week: [WeekdayPlan] = []
+    @Published var todayKm = 0.0
+    @Published var abrpResult = String(localized: "Nothing sent yet")
+    @Published var abrpOK = false
     @Published var abrpLastSent: Date?
     @Published var location: CLLocation?
 
@@ -31,16 +41,26 @@ final class LiveStore: ObservableObject {
         return l.speed * 3.6
     }
 
-    /// Geschatte resterende energie (kWh): SoC × capaciteit × actuele packspanning.
+    /// Estimated remaining energy (kWh): SoC × capacity × current pack voltage.
     var remainingKWh: Double? {
         guard let soc = snapshot.soc, let ah = snapshot.capacityAh, let v = snapshot.packVoltage else { return nil }
         return soc / 100 * ah * v / 1000
     }
 
-    /// Geschatte range (km) op basis van het gemiddelde verbruik (100 km → 10 km → rit).
+    /// Estimated energy in a full battery (kWh): capacity × current pack voltage.
+    var capacityKWh: Double? {
+        guard let ah = snapshot.capacityAh, let v = snapshot.packVoltage else { return nil }
+        return ah * v / 1000
+    }
+
+    /// The consumption to plan with: the longest average available.
+    var planningWhPerKm: Double? {
+        energy.last100WhPerKm ?? energy.last10WhPerKm ?? energy.tripWhPerKm
+    }
+
+    /// Estimated range (km) based on the average consumption (100 km → 10 km → trip).
     var rangeKm: Double? {
-        guard let kwh = remainingKWh,
-              let whPerKm = energy.last100WhPerKm ?? energy.last10WhPerKm ?? energy.tripWhPerKm,
+        guard let kwh = remainingKWh, let whPerKm = planningWhPerKm,
               whPerKm > 50 else { return nil }
         return kwh * 1000 / whPerKm
     }

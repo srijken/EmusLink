@@ -1,8 +1,8 @@
 import UIKit
 import CarPlay
 
-/// CarPlay (categorie "Driving Task"): vier tegels met meters als afbeelding.
-/// Met dit type app mogen alleen Apple-templates; vrij tekenen kan alleen bij navigatie-apps.
+/// CarPlay ("Driving Task" category): four tiles with gauges rendered as images.
+/// This type of app may only use Apple's templates; free drawing is only for navigation apps.
 final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
     private var interfaceController: CPInterfaceController?
     private var grid: CPGridTemplate?
@@ -34,16 +34,16 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         let consumption = e.instantWhPerKm ?? e.last10WhPerKm
 
         let buttons: [(String, UIImage)] = [
-            ("Verbruik", GaugeImage.render(value: consumption, range: -300...600, zero: 0,
+            (String(localized: "Consumption"), GaugeImage.render(value: consumption, range: -300...600, zero: 0,
                                            text: fmt(consumption, "%.0f"), unit: "Wh/km",
                                            positive: .systemOrange, negative: .systemGreen)),
-            ("Snelheid", GaugeImage.render(value: store.speedKmh, range: 0...140, zero: 0,
+            (String(localized: "Speed"), GaugeImage.render(value: store.speedKmh, range: 0...140, zero: 0,
                                            text: String(format: "%.0f", store.speedKmh), unit: "km/h",
                                            positive: .systemBlue, negative: .systemBlue)),
-            ("Accu", GaugeImage.render(value: store.snapshot.soc, range: 0...100, zero: 0,
+            (String(localized: "Battery"), GaugeImage.render(value: store.snapshot.soc, range: 0...100, zero: 0,
                                        text: fmt(store.snapshot.soc, "%.0f"), unit: "%",
                                        positive: socColor(store.snapshot.soc), negative: .systemRed)),
-            ("Range", GaugeImage.render(value: store.rangeKm, range: 0...300, zero: 0,
+            (String(localized: "Range"), GaugeImage.render(value: store.rangeKm, range: 0...300, zero: 0,
                                         text: store.rangeKm.map { "\(Int($0))" } ?? "–", unit: "km",
                                         positive: .systemTeal, negative: .systemTeal)),
         ]
@@ -61,19 +61,19 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         let store = AppModel.shared.store
         let e = store.energy, s = store.snapshot
         let items = [
-            CPInformationItem(title: "Rit", detail: String(format: "%.1f km · %@ Wh/km", e.tripKm, fmt(e.tripWhPerKm, "%.0f"))),
-            CPInformationItem(title: "Laatste 10 km", detail: "\(fmt(e.last10WhPerKm, "%.0f")) Wh/km"),
-            CPInformationItem(title: "Laatste 100 km", detail: "\(fmt(e.last100WhPerKm, "%.0f")) Wh/km"),
-            CPInformationItem(title: "Vermogen", detail: "\(fmt(s.powerKW, "%.1f")) kW"),
-            CPInformationItem(title: "Accutemperatuur", detail: "\(fmt(s.tempMin, "%.0f")) – \(fmt(s.tempMax, "%.0f")) °C"),
-            CPInformationItem(title: "Resterend", detail: "\(fmt(store.remainingKWh, "%.1f")) kWh"),
+            CPInformationItem(title: String(localized: "Trip"), detail: String(format: "%.1f km · %@ Wh/km", e.tripKm, fmt(e.tripWhPerKm, "%.0f"))),
+            CPInformationItem(title: String(localized: "Last 10 km"), detail: "\(fmt(e.last10WhPerKm, "%.0f")) Wh/km"),
+            CPInformationItem(title: String(localized: "Last 100 km"), detail: "\(fmt(e.last100WhPerKm, "%.0f")) Wh/km"),
+            CPInformationItem(title: String(localized: "Power"), detail: "\(fmt(s.powerKW, "%.1f")) kW"),
+            CPInformationItem(title: String(localized: "Battery temperature"), detail: "\(fmt(s.tempMin, "%.0f")) – \(fmt(s.tempMax, "%.0f")) °C"),
+            CPInformationItem(title: String(localized: "Remaining"), detail: "\(fmt(store.remainingKWh, "%.1f")) kWh"),
         ]
-        let info = CPInformationTemplate(title: "Details", layout: .twoColumn, items: items, actions: [])
+        let info = CPInformationTemplate(title: String(localized: "Details"), layout: .twoColumn, items: items, actions: [])
         interfaceController?.pushTemplate(info, animated: true, completion: nil)
     }
 }
 
-/// Tekent een boogmeter als afbeelding (voor CarPlay-tegels).
+/// Draws an arc gauge as an image (for CarPlay tiles).
 enum GaugeImage {
     static func render(value: Double?, range: ClosedRange<Double>, zero: Double,
                        text: String, unit: String, positive: UIColor, negative: UIColor) -> UIImage {

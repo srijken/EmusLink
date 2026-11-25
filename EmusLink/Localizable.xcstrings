@@ -1,0 +1,1132 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "% battery" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "% accu"
+          }
+        }
+      }
+    },
+    "10 km" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10 km"
+          }
+        }
+      }
+    },
+    "100 km" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "100 km"
+          }
+        }
+      }
+    },
+    "ABRP" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ABRP"
+          }
+        }
+      }
+    },
+    "API key (from Iternio)" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API key (van Iternio)"
+          }
+        }
+      }
+    },
+    "Active polling (experimental)" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actief pollen (experimenteel)"
+          }
+        }
+      }
+    },
+    "At %lld km/h" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bij %lld km/u"
+          }
+        }
+      }
+    },
+    "At which speed does the car use the least per km?" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bij welke snelheid verbruikt de auto het minst per km?"
+          }
+        }
+      }
+    },
+    "Average" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gemiddeld"
+          }
+        }
+      }
+    },
+    "Battery" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accu"
+          }
+        }
+      }
+    },
+    "Battery temperature" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accutemperatuur"
+          }
+        }
+      }
+    },
+    "Bluetooth off" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bluetooth uit"
+          }
+        }
+      }
+    },
+    "Cells" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cellen"
+          }
+        }
+      }
+    },
+    "Change set distances" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ingestelde afstanden wijzigen"
+          }
+        }
+      }
+    },
+    "Characteristics error: %@" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Characteristics-fout: %@"
+          }
+        }
+      }
+    },
+    "Charge to at least %lld %%" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laad tot minstens %lld %%"
+          }
+        }
+      }
+    },
+    "Clear" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wissen"
+          }
+        }
+      }
+    },
+    "Clear all consumption history?" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle verbruikshistorie wissen?"
+          }
+        }
+      }
+    },
+    "Clear history" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Historie wissen"
+          }
+        }
+      }
+    },
+    "Clear measurements" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metingen wissen"
+          }
+        }
+      }
+    },
+    "Clear the speed and daily measurements?" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De metingen per snelheid en per dag wissen?"
+          }
+        }
+      }
+    },
+    "Connected" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verbonden"
+          }
+        }
+      }
+    },
+    "Connected to %@" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verbonden met %@"
+          }
+        }
+      }
+    },
+    "Connecting failed: %@" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verbinden mislukt: %@"
+          }
+        }
+      }
+    },
+    "Connecting…" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verbinden…"
+          }
+        }
+      }
+    },
+    "Connection lost" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verbinding weg"
+          }
+        }
+      }
+    },
+    "Consumption" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verbruik"
+          }
+        }
+      }
+    },
+    "Dashboard" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dashboard"
+          }
+        }
+      }
+    },
+    "Day" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dag"
+          }
+        }
+      }
+    },
+    "Details" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Details"
+          }
+        }
+      }
+    },
+    "Diagnostics" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diagnose"
+          }
+        }
+      }
+    },
+    "Distance" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afstand"
+          }
+        }
+      }
+    },
+    "Driven today" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vandaag gereden"
+          }
+        }
+      }
+    },
+    "EMUS service not found" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EMUS-service niet gevonden"
+          }
+        }
+      }
+    },
+    "Energy comes from the BMS (voltage × current), distance from the phone's GPS. A new trip starts automatically after 30 minutes of standing still. Energy while charging is not counted, and kilometres only count while the app is connected to the module." : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Energie komt uit de BMS (spanning × stroom), afstand uit de GPS van de telefoon. Een nieuwe rit begint automatisch na 30 minuten stilstaan. Energie tijdens laden telt niet mee, en kilometers tellen alleen als de app met de module verbonden is."
+          }
+        }
+      }
+    },
+    "Energy this trip" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Energie deze rit"
+          }
+        }
+      }
+    },
+    "Enough charge for tomorrow" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Genoeg lading voor morgen"
+          }
+        }
+      }
+    },
+    "Error: %@" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fout: %@"
+          }
+        }
+      }
+    },
+    "Firmware" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firmware"
+          }
+        }
+      }
+    },
+    "Found: %@" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gevonden: %@"
+          }
+        }
+      }
+    },
+    "History kept" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Historie bewaard"
+          }
+        }
+      }
+    },
+    "In kWh/100 km (trip)" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In kWh/100 km (rit)"
+          }
+        }
+      }
+    },
+    "In the battery now" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nu in de accu"
+          }
+        }
+      }
+    },
+    "Insights" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inzicht"
+          }
+        }
+      }
+    },
+    "Last 10 km" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laatste 10 km"
+          }
+        }
+      }
+    },
+    "Last 100 km" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laatste 100 km"
+          }
+        }
+      }
+    },
+    "Last result" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laatste resultaat"
+          }
+        }
+      }
+    },
+    "Learn from trips" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leren van ritten"
+          }
+        }
+      }
+    },
+    "Learned" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geleerd"
+          }
+        }
+      }
+    },
+    "Learned counts from 3 measurements per day; until then the set distance applies. It is a cautious usual day: the distance that covers about three out of four of the last days. The app cannot control charging; this is advice only." : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geleerd telt vanaf 3 metingen per dag; tot die tijd geldt de ingestelde afstand. Het is een voorzichtige gewone dag: de afstand die ongeveer drie van de vier laatste dagen dekt. De app kan het laden niet aansturen; dit is alleen een advies."
+          }
+        }
+      }
+    },
+    "Location" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Locatie"
+          }
+        }
+      }
+    },
+    "Log" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log"
+          }
+        }
+      }
+    },
+    "Lowest" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laagst"
+          }
+        }
+      }
+    },
+    "Measured" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gemeten"
+          }
+        }
+      }
+    },
+    "Measured while driving, per speed band of 10 km/h, including accelerating, regeneration and heating. The large number is the range of speeds where consumption is at most 6 % above the lowest; lowest is the best band of 20 km/h. Small points have little data (under 20 km). Everything is higher in winter." : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gemeten tijdens het rijden, per snelheidsband van 10 km/u, inclusief optrekken, terugwinnen bij het remmen en verwarming. Het grote getal is het bereik van snelheden waarbij het verbruik hooguit 6 % boven het laagste ligt; laagst is de beste band van 20 km/u. Kleine punten hebben weinig data (onder 20 km). In de winter ligt alles hoger."
+          }
+        }
+      }
+    },
+    "Module" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Module"
+          }
+        }
+      }
+    },
+    "Most efficient speed" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zuinigste snelheid"
+          }
+        }
+      }
+    },
+    "Name" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Naam"
+          }
+        }
+      }
+    },
+    "Needed for speed, consumption per km and the position in ABRP. When iOS asks, choose ‘Always’ so it keeps working while the app is in the background." : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nodig voor snelheid, verbruik per km en de positie in ABRP. Kies bij de vraag van iOS voor ‘Altijd’, dan blijft het werken als de app op de achtergrond staat."
+          }
+        }
+      }
+    },
+    "Needed, including reserve" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nodig, inclusief reserve"
+          }
+        }
+      }
+    },
+    "New trip" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nieuwe rit"
+          }
+        }
+      }
+    },
+    "Not connected" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niet verbonden"
+          }
+        }
+      }
+    },
+    "Not enough driving measured yet. The curve appears after a few kilometres at different speeds." : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nog niet genoeg gereden. De lijn verschijnt na een paar kilometer op verschillende snelheden."
+          }
+        }
+      }
+    },
+    "Not enough kilometres driven yet. Turn on GPS in Settings and start driving." : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nog niet genoeg kilometers gereden. Zet GPS aan in Instellingen en ga rijden."
+          }
+        }
+      }
+    },
+    "Nothing sent yet" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nog niets verstuurd"
+          }
+        }
+      }
+    },
+    "Notify" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notify"
+          }
+        }
+      }
+    },
+    "Notify error: %@" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notify-fout: %@"
+          }
+        }
+      }
+    },
+    "Notify off" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notify uit"
+          }
+        }
+      }
+    },
+    "Notify on" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notify aan"
+          }
+        }
+      }
+    },
+    "Packets" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pakketten"
+          }
+        }
+      }
+    },
+    "Part" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deel"
+          }
+        }
+      }
+    },
+    "Power" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vermogen"
+          }
+        }
+      }
+    },
+    "Projected range" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verwachte range"
+          }
+        }
+      }
+    },
+    "Range" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Range"
+          }
+        }
+      }
+    },
+    "Recovered while braking" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terug bij remmen"
+          }
+        }
+      }
+    },
+    "Remaining" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resterend"
+          }
+        }
+      }
+    },
+    "Reset the trip?" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rit op nul zetten?"
+          }
+        }
+      }
+    },
+    "Restored by iOS" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hersteld door iOS"
+          }
+        }
+      }
+    },
+    "Save" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opslaan"
+          }
+        }
+      }
+    },
+    "Saved ✓" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opgeslagen ✓"
+          }
+        }
+      }
+    },
+    "Search again / other module" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opnieuw zoeken / andere module"
+          }
+        }
+      }
+    },
+    "Search by name" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoeken op naam"
+          }
+        }
+      }
+    },
+    "Searching for '%@'" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoeken naar '%@'"
+          }
+        }
+      }
+    },
+    "Searching for EMUS module" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoeken naar EMUS-module"
+          }
+        }
+      }
+    },
+    "Searching…" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoeken…"
+          }
+        }
+      }
+    },
+    "Send to ABRP" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Versturen naar ABRP"
+          }
+        }
+      }
+    },
+    "Sent at" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verstuurd om"
+          }
+        }
+      }
+    },
+    "Sentences valid / broken" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zinnen geldig / kapot"
+          }
+        }
+      }
+    },
+    "Services error: %@" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Services-fout: %@"
+          }
+        }
+      }
+    },
+    "Set" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ingesteld"
+          }
+        }
+      }
+    },
+    "Set distances" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ingestelde afstanden"
+          }
+        }
+      }
+    },
+    "Settings" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Instellingen"
+          }
+        }
+      }
+    },
+    "Speed" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Snelheid"
+          }
+        }
+      }
+    },
+    "Start new trip" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nieuwe rit starten"
+          }
+        }
+      }
+    },
+    "Status" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Status"
+          }
+        }
+      }
+    },
+    "The 10 km and 100 km averages and the chart will start over." : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De gemiddelden over 10 en 100 km en de grafiek beginnen dan opnieuw."
+          }
+        }
+      }
+    },
+    "Tomorrow (%@): about %lld km" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Tomorrow (%1$@): about %2$lld km"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Morgen (%1$@): ongeveer %2$lld km"
+          }
+        }
+      }
+    },
+    "Touch and hold a field and choose Paste. Switch off the ABRP plugin on the OVMS (script eval abrp.send(0)), otherwise both send data for the same car." : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Houd een veld ingedrukt en kies Plak. Zet de ABRP-plugin op de OVMS uit (script eval abrp.send(0)), anders sturen ze allebei naar dezelfde auto."
+          }
+        }
+      }
+    },
+    "Trip" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rit"
+          }
+        }
+      }
+    },
+    "Trip average" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rit gemiddeld"
+          }
+        }
+      }
+    },
+    "Trip distance" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ritafstand"
+          }
+        }
+      }
+    },
+    "Trip started" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rit gestart"
+          }
+        }
+      }
+    },
+    "Use GPS" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GPS gebruiken"
+          }
+        }
+      }
+    },
+    "Used until the app has learned a day from at least 3 measurements, or when learning is off." : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gebruikt totdat de app een dag heeft geleerd uit minstens 3 metingen, of als leren uit staat."
+          }
+        }
+      }
+    },
+    "User token (ABRP → Live data)" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "User token (ABRP → Live data)"
+          }
+        }
+      }
+    },
+    "Voltage" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spanning"
+          }
+        }
+      }
+    },
+    "Wh/km" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wh/km"
+          }
+        }
+      }
+    },
+    "Writing via" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schrijven via"
+          }
+        }
+      }
+    },
+    "km ago" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "km geleden"
+          }
+        }
+      }
+    },
+    "off" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "uit"
+          }
+        }
+      }
+    },
+    "on" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "aan"
+          }
+        }
+      }
+    },
+    "range: no consumption yet" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "range: nog geen verbruik"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

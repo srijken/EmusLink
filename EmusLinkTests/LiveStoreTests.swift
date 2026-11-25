@@ -21,7 +21,7 @@ final class LiveStoreTests: XCTestCase {
 
     func testRangePrefersLongestAverage() {
         let s = store()
-        XCTAssertNil(s.rangeKm, "zonder verbruik geen range")
+        XCTAssertNil(s.rangeKm, "no range without consumption")
         s.energy.tripWhPerKm = 300
         XCTAssertEqual(s.rangeKm!, 43_290.0 / 300, accuracy: 1e-6)
         s.energy.last10WhPerKm = 250
@@ -32,7 +32,7 @@ final class LiveStoreTests: XCTestCase {
 
     func testRangeIsHiddenForImplausibleConsumption() {
         let s = store()
-        s.energy.last100WhPerKm = 30          // vooral bergaf/regen: zou een absurde range geven
+        s.energy.last100WhPerKm = 30          // mostly downhill/regeneration: would give an absurd range
         XCTAssertNil(s.rangeKm)
         s.energy.last100WhPerKm = -50
         XCTAssertNil(s.rangeKm)
@@ -49,15 +49,15 @@ final class LiveStoreTests: XCTestCase {
         s.location = fix(speed: 25, age: 0)
         XCTAssertEqual(s.speedKmh, 90, accuracy: 1e-9)
         s.location = fix(speed: 25, age: 30)
-        XCTAssertEqual(s.speedKmh, 0, "oude positie")
+        XCTAssertEqual(s.speedKmh, 0, "stale location")
         s.location = fix(speed: -1, age: 0)
-        XCTAssertEqual(s.speedKmh, 0, "snelheid onbekend")
+        XCTAssertEqual(s.speedKmh, 0, "speed unknown")
     }
 
     func testLogKeepsNewestFirstAndIsCapped() {
         let s = LiveStore()
-        for i in 0..<200 { s.addLog("regel \(i)") }
+        for i in 0..<200 { s.addLog("line \(i)") }
         XCTAssertEqual(s.log.count, 150)
-        XCTAssertTrue(s.log.first!.hasSuffix("regel 199"))
+        XCTAssertTrue(s.log.first!.hasSuffix("line 199"))
     }
 }
