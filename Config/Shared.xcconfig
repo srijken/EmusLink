@@ -1,0 +1,20 @@
+// Build-instellingen die per persoon of per auto verschillen.
+// Hier staan de standaardwaarden; zet je eigen waarden in Config/Local.xcconfig
+// (staat in .gitignore, zie Local.xcconfig.example). Draai daarna `xcodegen`.
+
+// Bundle identifier van de app.
+APP_BUNDLE_ID = com.example.emuslink
+
+// Apple Developer Team ID voor signing (nodig om op een iPhone te draaien).
+DEVELOPMENT_TEAM =
+
+// Naam (of een deel ervan) waarop naar de EMUS-module gezocht wordt.
+// Leeg = alleen zoeken op de EMUS-service. In de app te wijzigen.
+DEFAULT_MODULE_NAME =
+
+// Optioneel: ABRP-gegevens die al ingevuld zijn bij een verse installatie.
+// Ze komen in de app-bundle terecht; in de app zijn ze te overschrijven.
+ABRP_API_KEY =
+ABRP_USER_TOKEN =
+
+#include? "Local.xcconfig"

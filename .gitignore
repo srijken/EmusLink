@@ -1,0 +1,34 @@
+# macOS
+.DS_Store
+
+# Xcode
+xcuserdata/
+DerivedData/
+build/
+*.xcuserstate
+*.xcresult
+*.ipa
+*.dSYM
+*.dSYM.zip
+
+# Het Xcode-project wordt door XcodeGen gemaakt uit project.yml (`xcodegen`)
+*.xcodeproj
+*.xcworkspace
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# Lokale instellingen en secrets (zie Config/Local.xcconfig.example)
+Config/Local.xcconfig
+.env
+.env.*
+!.env.example
+
+# Claude
+.claude/settings.local.json
+
+# Losse exports en oude bestanden
+Claude outputs/
+_to_delete/
+*.zip

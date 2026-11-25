@@ -1,0 +1,64 @@
+name: EmusLink
+options:
+  deploymentTarget:
+    iOS: "17.0"
+# Persoonlijke instellingen (team, bundle-ID, naam van de module) staan in
+# Config/Local.xcconfig, zie Config/Local.xcconfig.example.
+configFiles:
+  Debug: Config/Shared.xcconfig
+  Release: Config/Shared.xcconfig
+targets:
+  EmusLink:
+    type: application
+    platform: iOS
+    scheme:
+      testTargets:
+        - EmusLinkTests
+    sources:
+      - path: EmusLink
+        excludes:
+          - "*.entitlements"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(APP_BUNDLE_ID)
+        MARKETING_VERSION: "0.2"
+        CURRENT_PROJECT_VERSION: "2"
+        SWIFT_VERSION: "5.0"
+        TARGETED_DEVICE_FAMILY: "1"
+        CODE_SIGN_STYLE: Automatic
+        # CarPlay-entitlement alleen in de simulator. Op de iPhone pas als Apple
+        # de "Driving Task"-entitlement voor je account heeft goedgekeurd:
+        # haal dan de [sdk=...]-beperking weg.
+        "CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]": EmusLink/CarPlay.entitlements
+    info:
+      path: EmusLink/Info.plist
+      properties:
+        CFBundleDisplayName: EmusLink
+        EmusDefaultModuleName: $(DEFAULT_MODULE_NAME)
+        ABRPDefaultAPIKey: $(ABRP_API_KEY)
+        ABRPDefaultUserToken: $(ABRP_USER_TOKEN)
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UIBackgroundModes: [bluetooth-central, location]
+        NSBluetoothAlwaysUsageDescription: "EmusLink leest de accudata van de EMUS BMS via Bluetooth."
+        NSLocationWhenInUseUsageDescription: "Snelheid en afstand voor het verbruik per km, en de positie voor ABRP."
+        NSLocationAlwaysAndWhenInUseUsageDescription: "Ook op de achtergrond verbruik bijhouden en de positie naar ABRP sturen."
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: true
+          UISceneConfigurations:
+            CPTemplateApplicationSceneSessionRoleApplication:
+              - UISceneConfigurationName: CarPlay
+                UISceneClassName: CPTemplateApplicationScene
+                UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).CarPlaySceneDelegate
+  EmusLinkTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: EmusLinkTests
+    dependencies:
+      - target: EmusLink
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: $(APP_BUNDLE_ID).tests
+        SWIFT_VERSION: "5.0"

@@ -1,0 +1,10 @@
+// Kopieer naar Config/Local.xcconfig en vul in. Dat bestand komt niet in git.
+// Let op: in een xcconfig begint `//` een commentaar, ook midden in een waarde.
+
+APP_BUNDLE_ID = com.example.emuslink
+DEVELOPMENT_TEAM = ABCDE12345
+DEFAULT_MODULE_NAME = MijnModule
+
+// Optioneel
+ABRP_API_KEY =
+ABRP_USER_TOKEN =
