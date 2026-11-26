@@ -51,6 +51,16 @@
         }
       }
     },
+    "About" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Over"
+          }
+        }
+      }
+    },
     "Active polling (experimental)" : {
       "localizations" : {
         "nl" : {
@@ -117,6 +127,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bluetooth uit"
+          }
+        }
+      }
+    },
+    "Built" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gebouwd"
+          }
+        }
+      }
+    },
+    "Bundle ID" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bundle-ID"
           }
         }
       }
@@ -1053,6 +1083,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "User token (ABRP → Live data)"
+          }
+        }
+      }
+    },
+    "Version" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Versie"
           }
         }
       }

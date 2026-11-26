@@ -19,6 +19,8 @@ xcodebuild -project EmusLink.xcodeproj -scheme EmusLink \
 - Change build settings in `project.yml`, never in `EmusLink.xcodeproj`.
 - Without `Config/Local.xcconfig` the project builds for the simulator with the defaults from `Config/Shared.xcconfig`. An iPhone needs your own `DEVELOPMENT_TEAM`.
 - `EmusLink/Info.plist` is overwritten by XcodeGen: edit `info.properties` in `project.yml`.
+- Raise `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` in `project.yml` with every change the user installs. Settings → About shows the version, the build time and the bundle ID.
+- Keep `APP_BUNDLE_ID` the same between builds: iOS treats another bundle ID as another app, which is installed next to the old one and starts without its data.
 
 ## Testing
 
@@ -52,6 +54,7 @@ xcodebuild test -project EmusLink.xcodeproj -scheme EmusLink \
 | `DashboardView`, `ConsumptionView`, `InsightsView`, `SettingsView`, `Gauges` | SwiftUI screens |
 | `CarPlaySceneDelegate.swift` | CarPlay (Driving Task, templates only) |
 | `Localizable.xcstrings`, `InfoPlist.xcstrings` | String catalogs: UI texts and permission texts |
+| `Assets.xcassets`, `Tools/make-icon.swift` | App icon; the PNG is drawn by the script (`swift Tools/make-icon.swift <output.png>`) |
 
 ## Conventions
 

@@ -63,6 +63,14 @@ struct SettingsView: View {
                     if let w = store.writeCharacteristic { LabeledContent("Writing via", value: w) }
                 }
 
+                Section("About") {
+                    LabeledContent("Version", value: AppConfig.version)
+                    if let built = AppConfig.buildDate {
+                        LabeledContent("Built", value: built.formatted(date: .abbreviated, time: .shortened))
+                    }
+                    LabeledContent("Bundle ID", value: AppConfig.bundleID)
+                }
+
                 Section("Log") {
                     ForEach(Array(store.log.prefix(60).enumerated()), id: \.offset) {
                         Text($0.element).font(.caption2.monospaced())

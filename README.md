@@ -26,6 +26,8 @@ Everything that differs per person or per car lives in `Config/Local.xcconfig`. 
 | `DEFAULT_MODULE_NAME` | Name (or part of it) of the EMUS module; empty = search by the EMUS service only |
 | `ABRP_API_KEY`, `ABRP_USER_TOKEN` | Optional: pre-filled on a fresh install |
 
+Keep `APP_BUNDLE_ID` the same once the app is on your phone. iOS sees another bundle identifier as another app: it is installed next to the old one and starts without its history. Settings → About shows the version, the build time and the bundle identifier of the installed app.
+
 The ABRP credentials and the module name can also be set in the app itself (see below); whatever is saved there takes precedence.
 
 ## Testing
@@ -41,7 +43,7 @@ The unit tests are in `EmusLinkTests/`. See [AGENTS.md](AGENTS.md) for the code 
 - **Dashboard**: battery percentage with range, consumption and speed gauges, and tiles for power, average consumption, voltage, temperature and cells.
 - **Consumption**: consumption over the last 10, 25 or 50 km as a filled line (regeneration below zero), with the average and the projected range for that distance, plus averages for the trip / 10 km / 100 km and starting a new trip.
 - **Insights**: the most efficient speed (consumption per speed band of 10 km/h, with the range of speeds that is within 6 % of the lowest) and learning from trips (distance per day of the week: set, learned and measured, with the charge needed for tomorrow). Both fill up as you drive; the charge figure is advice only, the app does not control charging.
-- **Settings**: ABRP, GPS, module, diagnostics and log.
+- **Settings**: ABRP, GPS, module, diagnostics, version and log.
 
 ## Languages
 
