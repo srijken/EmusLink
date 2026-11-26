@@ -1,0 +1,81 @@
+name: TestFlight
+
+# Uploads a build to TestFlight after the tests passed on main, or by hand (Actions → TestFlight → Run).
+# Needs these repository secrets (Settings → Secrets and variables → Actions); without them it skips:
+#   ASC_KEY_P8          the App Store Connect API key (.p8 file), base64-encoded: base64 -i AuthKey_XXXX.p8
+#   ASC_KEY_ID          the key's ID
+#   ASC_ISSUER_ID       the issuer ID (App Store Connect → Users and Access → Integrations)
+#   APP_BUNDLE_ID       the app's bundle identifier, as in Config/Local.xcconfig
+#   DEVELOPMENT_TEAM    the Team ID
+#   DEFAULT_MODULE_NAME the module's name (optional)
+# The API key needs the Admin role, so Xcode can create the distribution certificate and the
+# profiles in the cloud (automatic signing); then no certificate has to be stored here.
+
+on:
+  workflow_run:
+    workflows: [Tests]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: testflight
+  cancel-in-progress: false
+
+jobs:
+  upload:
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
+    runs-on: macos-26
+    timeout-minutes: 40
+    env:
+      ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      APP_BUNDLE_ID: ${{ secrets.APP_BUNDLE_ID }}
+      DEVELOPMENT_TEAM: ${{ secrets.DEVELOPMENT_TEAM }}
+      DEFAULT_MODULE_NAME: ${{ secrets.DEFAULT_MODULE_NAME }}
+    steps:
+      - name: Check the secrets
+        id: secrets
+        run: |
+          for name in ASC_KEY_P8 ASC_KEY_ID ASC_ISSUER_ID APP_BUNDLE_ID DEVELOPMENT_TEAM; do
+            if [ -z "$(printenv "$name")" ]; then
+              echo "::notice::Secret $name is not set: no TestFlight upload."
+              echo "ready=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          done
+          echo "ready=true" >> "$GITHUB_OUTPUT"
+
+      # The commit the tests ran on, not whatever main is now.
+      - uses: actions/checkout@v4
+        if: steps.secrets.outputs.ready == 'true'
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Write the local configuration and the API key
+        if: steps.secrets.outputs.ready == 'true'
+        run: |
+          {
+            echo "APP_BUNDLE_ID = $APP_BUNDLE_ID"
+            echo "DEVELOPMENT_TEAM = $DEVELOPMENT_TEAM"
+            echo "DEFAULT_MODULE_NAME = $DEFAULT_MODULE_NAME"
+          } > Config/Local.xcconfig
+          mkdir -p "$RUNNER_TEMP/asc"
+          echo "$ASC_KEY_P8" | base64 --decode > "$RUNNER_TEMP/asc/AuthKey.p8"
+          echo "ASC_KEY_PATH=$RUNNER_TEMP/asc/AuthKey.p8" >> "$GITHUB_ENV"
+
+      - name: Archive and upload
+        if: steps.secrets.outputs.ready == 'true'
+        run: |
+          which xcodegen || brew install xcodegen
+          xcodebuild -version
+          set -o pipefail
+          Tools/testflight.sh 2>&1 | grep -vE '^\s*$' | tail -n 80
+
+      - name: Remove the API key
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/asc" Config/Local.xcconfig

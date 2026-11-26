@@ -48,6 +48,19 @@ With a paid Apple Developer account the app can be installed through TestFlight 
 
 `Tools/testflight.sh --archive-only` stops before the upload. A TestFlight build expires after 90 days.
 
+### Automatically from GitHub Actions
+
+`.github/workflows/testflight.yml` uploads a build after the tests passed on `main`, or when started by hand (Actions → TestFlight → Run workflow). Until these repository secrets are set it skips (Settings → Secrets and variables → Actions):
+
+| Secret | Value |
+| --- | --- |
+| `ASC_KEY_P8` | An App Store Connect API key with the **Admin** role (Users and Access → Integrations), the `.p8` file base64-encoded: `base64 -i AuthKey_XXXX.p8 \| pbcopy` |
+| `ASC_KEY_ID`, `ASC_ISSUER_ID` | The key's ID and the issuer ID from the same page |
+| `APP_BUNDLE_ID`, `DEVELOPMENT_TEAM` | As in `Config/Local.xcconfig` |
+| `DEFAULT_MODULE_NAME` | Optional, as in `Config/Local.xcconfig` |
+
+With the Admin role Xcode creates the distribution certificate and the profiles in the cloud, so no certificate is stored in GitHub.
+
 ## Screens
 
 - **Dashboard**: battery percentage with range, consumption and speed gauges, and tiles for power, average consumption, voltage, temperature and cells.
