@@ -120,3 +120,70 @@ final class ABRPClientTests: XCTestCase {
         XCTAssertEqual(client.apiKey, "")
     }
 }
+
+final class ABRPQueueTests: XCTestCase {
+    private var suite = ""
+    private var defaults: UserDefaults!
+    private let now = Date(timeIntervalSince1970: 1_800_000_000)
+
+    override func setUp() {
+        suite = "EmusLinkTests.\(UUID().uuidString)"
+        defaults = UserDefaults(suiteName: suite)
+    }
+
+    override func tearDown() {
+        defaults.removePersistentDomain(forName: suite)
+    }
+
+    func testOutcome() {
+        XCTAssertEqual(ABRPClient.outcome(code: 200, body: "{\"status\": \"ok\"}", networkError: false), .ok)
+        XCTAssertEqual(ABRPClient.outcome(code: 0, body: "", networkError: true), .retry, "no network")
+        XCTAssertEqual(ABRPClient.outcome(code: 503, body: "", networkError: false), .retry)
+        XCTAssertEqual(ABRPClient.outcome(code: 429, body: "", networkError: false), .retry, "rate limit")
+        XCTAssertEqual(ABRPClient.outcome(code: 401, body: "unauthorized", networkError: false), .rejected)
+        XCTAssertEqual(ABRPClient.outcome(code: 200, body: "{\"status\": \"error\"}", networkError: false), .rejected)
+    }
+
+    func testQueueIsOldestFirstAndSurvivesARestart() {
+        let q = TelemetryQueue(defaults: defaults)
+        XCTAssertTrue(q.isEmpty)
+        q.append("{\"a\":1}", utc: now)
+        q.append("{\"a\":2}", utc: now.addingTimeInterval(10))
+        let again = TelemetryQueue(defaults: defaults)
+        XCTAssertEqual(again.count, 2)
+        XCTAssertEqual(again.first?.json, "{\"a\":1}")
+        again.removeFirst(ifUTC: now)
+        XCTAssertEqual(again.first?.json, "{\"a\":2}")
+    }
+
+    func testRemoveFirstOnlyRemovesTheSentItem() {
+        let q = TelemetryQueue(defaults: defaults)
+        q.append("{}", utc: now)
+        q.removeFirst(ifUTC: now.addingTimeInterval(1))
+        XCTAssertEqual(q.count, 1)
+    }
+
+    func testQueueIsCapped() {
+        let q = TelemetryQueue(defaults: defaults)
+        for i in 0..<(TelemetryQueue.maxCount + 5) { q.append("{}", utc: now.addingTimeInterval(Double(i))) }
+        XCTAssertEqual(q.count, TelemetryQueue.maxCount)
+        XCTAssertEqual(q.first?.utc, now.addingTimeInterval(5), "the oldest are dropped")
+    }
+
+    func testOldPointsArePruned() {
+        let q = TelemetryQueue(defaults: defaults)
+        q.append("{}", utc: now.addingTimeInterval(-TelemetryQueue.maxAge - 1))
+        q.append("{}", utc: now)
+        q.prune(now: now)
+        XCTAssertEqual(q.count, 1)
+        q.clear()
+        XCTAssertTrue(TelemetryQueue(defaults: defaults).isEmpty)
+    }
+
+    func testJSONRoundTrip() {
+        let json = try! XCTUnwrap(ABRPClient.json(["soc": 60.8, "utc": 1]))
+        XCTAssertEqual(ABRPClient.soc(in: json), 60.8)
+        let url = try! XCTUnwrap(ABRPClient.url(apiKey: "k", token: "t", json: json))
+        XCTAssertTrue(url.absoluteString.contains("tlm="))
+    }
+}

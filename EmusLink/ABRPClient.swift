@@ -5,14 +5,20 @@ import UIKit
 /// Sends telemetry to ABRP's Telemetry API (Iternio).
 /// Same endpoint as the OVMS plugin: GET https://api.iternio.com/1/tlm/send?api_key=…&token=…&tlm={json}
 /// `maybeSend` is called on the Bluetooth queue; the result goes to the LiveStore.
+/// When sending fails (no network), the telemetry waits in a `TelemetryQueue` and is sent later,
+/// oldest first, so ABRP still gets the whole trip and ends with the current state.
 final class ABRPClient {
     static let endpoint = "https://api.iternio.com/1/tlm/send"
+    /// Pause between two queued requests while catching up, so the API is not flooded.
+    static let catchUpInterval: TimeInterval = 1
 
     weak var store: LiveStore?
 
     private let defaults: UserDefaults
     private let defaultAPIKey: String
     private let defaultUserToken: String
+    let queue: TelemetryQueue
+    private let sendQueue = DispatchQueue(label: "\(AppConfig.bundleID).abrp")
 
     /// The defaults come from the build configuration and apply until something is saved in the app.
     init(defaults: UserDefaults = .standard,
@@ -21,6 +27,7 @@ final class ABRPClient {
         self.defaults = defaults
         self.defaultAPIKey = defaultAPIKey
         self.defaultUserToken = defaultUserToken
+        self.queue = TelemetryQueue(defaults: defaults)
     }
 
     var apiKey: String {
@@ -61,29 +68,78 @@ final class ABRPClient {
         lastCharging = snap.isCharging
         lock.unlock()
 
-        guard let url = Self.url(apiKey: apiKey, token: userToken,
-                                 telemetry: Self.telemetry(snap, soc: soc, location: recentLoc, now: now))
-        else { finish(nil); return }
+        guard let json = Self.json(Self.telemetry(snap, soc: soc, location: recentLoc, now: now)) else {
+            finish(nil); return
+        }
 
+        if queue.isEmpty {
+            send(json) { [weak self] outcome, result in
+                guard let self else { return }
+                if outcome == .retry { self.queue.append(json, utc: now) }
+                self.finish(result, ok: outcome == .ok, sentAt: outcome == .ok ? now : nil)
+            }
+        } else {
+            // Older points are still waiting: this one goes behind them, so ABRP ends with the newest.
+            queue.append(json, utc: now)
+            catchUp(lastResult: nil)
+        }
+    }
+
+    /// Sends the queued telemetry one by one, oldest first, until the queue is empty or a request fails.
+    private func catchUp(lastResult: (String, Bool, Date)?) {
+        queue.prune(now: Date())
+        guard let item = queue.first else {
+            finish(lastResult?.0, ok: lastResult?.1 ?? false, sentAt: lastResult?.2)
+            return
+        }
+        send(item.json) { [weak self] outcome, result in
+            guard let self else { return }
+            // No network: stop and try again with the next due point.
+            if outcome == .retry { self.finish(result, ok: false); return }
+            self.queue.removeFirst(ifUTC: item.utc)        // sent, or refused (sending it again will not help)
+            self.publishPending()
+            self.sendQueue.asyncAfter(deadline: .now() + Self.catchUpInterval) {
+                self.catchUp(lastResult: (result, outcome == .ok, item.utc))
+            }
+        }
+    }
+
+    enum Outcome: Equatable {
+        case ok         // accepted
+        case retry      // no network, timeout, server error or rate limit: keep it and send it later
+        case rejected   // the request itself was refused: sending it again will not help
+    }
+
+    /// Whether a failed request is worth sending again. `code` is 0 when there was no response.
+    static func outcome(code: Int, body: String, networkError: Bool) -> Outcome {
+        if networkError { return .retry }
+        if code == 200, body.contains("\"ok\"") { return .ok }
+        if code == 0 || code == 408 || code == 429 || code >= 500 { return .retry }
+        return .rejected
+    }
+
+    /// One request; `completion` gets the outcome and the text for the Settings screen.
+    private func send(_ json: String, completion: @escaping (Outcome, String) -> Void) {
+        guard let url = Self.url(apiKey: apiKey, token: userToken, json: json) else {
+            completion(.rejected, String(localized: "Error: invalid request")); return
+        }
         // Ask for some extra time, so the request can finish when iOS suspends the app again.
         var task: UIBackgroundTaskIdentifier = .invalid
         task = UIApplication.shared.beginBackgroundTask(withName: "abrp") {
             UIApplication.shared.endBackgroundTask(task)
         }
-        URLSession.shared.dataTask(with: URLRequest(url: url, timeoutInterval: 8)) { [weak self] data, response, error in
+        URLSession.shared.dataTask(with: URLRequest(url: url, timeoutInterval: 8)) { data, response, error in
             let code = (response as? HTTPURLResponse)?.statusCode ?? 0
             let body = data.flatMap { String(data: $0, encoding: .utf8) } ?? ""
-            let result: String
-            var ok = false
+            let outcome = Self.outcome(code: code, body: body, networkError: error != nil)
             if let error {
-                result = String(localized: "Error: \(error.localizedDescription)")
-            } else if code == 200, body.contains("\"ok\"") {
-                result = "OK (SoC \(String(format: "%.1f", soc)) %)"
-                ok = true
+                completion(outcome, String(localized: "Error: \(error.localizedDescription)"))
+            } else if outcome == .ok {
+                let soc = Self.soc(in: json).map { String(format: "%.1f", $0) } ?? "–"
+                completion(outcome, "OK (SoC \(soc) %)")
             } else {
-                result = "HTTP \(code): \(body.prefix(120))"
+                completion(outcome, "HTTP \(code): \(body.prefix(120))")
             }
-            self?.finish(result, ok: ok, sentAt: now)
             UIApplication.shared.endBackgroundTask(task)
         }.resume()
     }
@@ -111,27 +167,109 @@ final class ABRPClient {
         return tlm
     }
 
+    static func json(_ telemetry: [String: Any]) -> String? {
+        guard let data = try? JSONSerialization.data(withJSONObject: telemetry, options: [.sortedKeys]) else { return nil }
+        return String(data: data, encoding: .utf8)
+    }
+
     static func url(apiKey: String, token: String, telemetry: [String: Any]) -> URL? {
-        guard let json = try? JSONSerialization.data(withJSONObject: telemetry),
-              let jsonText = String(data: json, encoding: .utf8),
-              var comps = URLComponents(string: endpoint) else { return nil }
+        json(telemetry).flatMap { url(apiKey: apiKey, token: token, json: $0) }
+    }
+
+    static func url(apiKey: String, token: String, json: String) -> URL? {
+        guard var comps = URLComponents(string: endpoint) else { return nil }
         comps.queryItems = [
             URLQueryItem(name: "api_key", value: apiKey),
             URLQueryItem(name: "token", value: token),
-            URLQueryItem(name: "tlm", value: jsonText),
+            URLQueryItem(name: "tlm", value: json),
         ]
         // URLComponents does not escape '+'; the server reads it as a space.
         comps.percentEncodedQuery = comps.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
         return comps.url
     }
 
+    static func soc(in json: String) -> Double? {
+        guard let data = json.data(using: .utf8),
+              let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
+        return (object["soc"] as? NSNumber)?.doubleValue
+    }
+
     private func finish(_ result: String?, ok: Bool = false, sentAt: Date? = nil) {
         lock.lock(); inFlight = false; lock.unlock()
+        publishPending()
         guard let result else { return }
         DispatchQueue.main.async { [weak store] in
             store?.abrpResult = result
             store?.abrpOK = ok
-            store?.abrpLastSent = sentAt
+            if let sentAt { store?.abrpLastSent = sentAt }
         }
+    }
+
+    private func publishPending() {
+        let pending = queue.count
+        DispatchQueue.main.async { [weak store] in store?.abrpPending = pending }
+    }
+}
+
+/// Telemetry that could not be sent yet. Kept in `UserDefaults`, so it survives the app being stopped.
+/// Thread-safe.
+final class TelemetryQueue {
+    /// At 10 s per point this is about four hours of driving.
+    static let maxCount = 1500
+    /// Older points are of no use to ABRP any more.
+    static let maxAge: TimeInterval = 24 * 3600
+
+    struct Item: Codable, Equatable {
+        var utc: Date
+        var json: String
+    }
+
+    private let lock = NSLock()
+    private let defaults: UserDefaults
+    private let storeKey = "abrpQueue.v1"
+    private var items: [Item] = []
+
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
+        if let data = defaults.data(forKey: storeKey),
+           let stored = try? JSONDecoder().decode([Item].self, from: data) {
+            items = stored
+        }
+    }
+
+    var count: Int { lock.lock(); defer { lock.unlock() }; return items.count }
+    var isEmpty: Bool { count == 0 }
+    var first: Item? { lock.lock(); defer { lock.unlock() }; return items.first }
+
+    func append(_ json: String, utc: Date) {
+        lock.lock(); defer { lock.unlock() }
+        items.append(Item(utc: utc, json: json))
+        if items.count > Self.maxCount { items.removeFirst(items.count - Self.maxCount) }
+        save()
+    }
+
+    /// Removes the oldest item, if it is still the one that was sent.
+    func removeFirst(ifUTC utc: Date) {
+        lock.lock(); defer { lock.unlock() }
+        guard items.first?.utc == utc else { return }
+        items.removeFirst()
+        save()
+    }
+
+    func prune(now: Date) {
+        lock.lock(); defer { lock.unlock() }
+        let before = items.count
+        items.removeAll { now.timeIntervalSince($0.utc) > Self.maxAge }
+        if items.count != before { save() }
+    }
+
+    func clear() {
+        lock.lock(); defer { lock.unlock() }
+        items = []
+        save()
+    }
+
+    private func save() {
+        if let data = try? JSONEncoder().encode(items) { defaults.set(data, forKey: storeKey) }
     }
 }

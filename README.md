@@ -73,6 +73,7 @@ the `[sdk=iphonesimulator*]` restriction in `project.yml`.
 - **User token**: ABRP → car settings → Live data → create a token.
 - **Module name**: defaults to the value of `DEFAULT_MODULE_NAME`. Part of the name is enough.
 - If the car also has an OVMS with the ABRP plugin, switch that off (`script eval abrp.send(0)`) or use a different token, otherwise both send data for the same car.
+- Telemetry goes out every 10 s while driving or charging and every 5 min when parked (sooner when the SoC changes). Without network it waits, for up to 24 hours, and is sent oldest first, one per second, once there is network again. Requests ABRP refuses (4xx) are not repeated.
 
 ## Protocol (derived from logs of 22 November 2026)
 

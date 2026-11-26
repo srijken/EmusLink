@@ -421,6 +421,16 @@
         }
       }
     },
+    "Discard waiting data" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wachtende data weggooien"
+          }
+        }
+      }
+    },
     "Distance" : {
       "localizations" : {
         "nl" : {
@@ -487,6 +497,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fout: %@"
+          }
+        }
+      }
+    },
+    "Error: invalid request" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fout: ongeldig verzoek"
           }
         }
       }
@@ -1237,12 +1257,12 @@
         }
       }
     },
-    "Touch and hold a field and choose Paste. Switch off the ABRP plugin on the OVMS (script eval abrp.send(0)), otherwise both send data for the same car." : {
+    "Touch and hold a field and choose Paste. Switch off the ABRP plugin on the OVMS (script eval abrp.send(0)), otherwise both send data for the same car. Without network the data waits (up to 24 hours) and is sent once there is network again, oldest first." : {
       "localizations" : {
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Houd een veld ingedrukt en kies Plak. Zet de ABRP-plugin op de OVMS uit (script eval abrp.send(0)), anders sturen ze allebei naar dezelfde auto."
+            "value" : "Houd een veld ingedrukt en kies Plak. Zet de ABRP-plugin op de OVMS uit (script eval abrp.send(0)), anders sturen ze allebei naar dezelfde auto. Zonder netwerk wacht de data (tot 24 uur) en wordt die verstuurd zodra er weer netwerk is, oudste eerst."
           }
         }
       }
@@ -1333,6 +1353,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Spanning"
+          }
+        }
+      }
+    },
+    "Waiting to be sent" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wacht op verzending"
           }
         }
       }

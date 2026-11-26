@@ -34,7 +34,7 @@ xcodebuild test -project EmusLink.xcodeproj -scheme EmusLink \
 
 - GitHub Actions runs the same tests on every push to `main` and on pull requests (`.github/workflows/tests.yml`), without `Config/Local.xcconfig` and with the Xcode of the runner, which can be older than yours.
 - Unit tests live in `EmusLinkTests/` (XCTest, `@testable import EmusLink`), one file per component.
-- Run the tests after every change and add tests for new logic or a fixed bug. Covered: the protocol (CRC, sentences, decoding), `EnergyTracker` (averages, trips, the points of the consumption chart), `SpeedProfile`, `DailyDistance` and `ChargeAdvice`, `BatteryHealth` and `TemperatureMonitor`, `LiveStore` (range), the ABRP telemetry and URL, module matching, and the string catalogs.
+- Run the tests after every change and add tests for new logic or a fixed bug. Covered: the protocol (CRC, sentences, decoding), `EnergyTracker` (averages, trips, the points of the consumption chart), `SpeedProfile`, `DailyDistance` and `ChargeAdvice`, `BatteryHealth` and `TemperatureMonitor`, `LiveStore` (range), the ABRP telemetry, URL and offline queue, module matching, and the string catalogs.
 - Keep logic testable: calculations belong in `EmusProtocol`, `EnergyTracker`, `LiveStore` or a static function, not in a View or a CoreBluetooth delegate. Pass time (`now:`/`at:`) and `UserDefaults` as parameters instead of hard-coding `Date()` and `.standard`; tests use their own `UserDefaults(suiteName:)`.
 - The tests run inside the app in the simulator (demo mode). Not tested automatically: Bluetooth, GPS, CarPlay and the layout of the screens. Check those in the simulator or on an iPhone.
 
@@ -49,7 +49,7 @@ xcodebuild test -project EmusLink.xcodeproj -scheme EmusLink \
 | `DailyDistance.swift` | Distance per day, the learned distance per weekday, `ChargeAdvice` |
 | `BatteryHealth.swift` | SoH, cell spread and temperatures per day; `TemperatureMonitor` (limits with hysteresis) |
 | `AlertNotifier.swift` | Local notifications (temperature warning, also on CarPlay) |
-| `ABRPClient.swift` | Telemetry to the ABRP/Iternio API |
+| `ABRPClient.swift` | Telemetry to the ABRP/Iternio API; `TelemetryQueue` keeps what could not be sent |
 | `LocationProvider.swift` | GPS |
 | `LiveStore.swift` | `ObservableObject` with everything the screens show (main thread only) |
 | `AppConfig.swift` | Defaults from the build configuration (xcconfig → Info.plist) |

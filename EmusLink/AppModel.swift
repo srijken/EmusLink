@@ -41,6 +41,7 @@ final class AppModel {
         #endif
 
         store.energy = energy.summary()
+        store.abrpPending = abrp.queue.count
         refreshInsights()
     }
 

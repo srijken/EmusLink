@@ -36,8 +36,15 @@ struct SettingsView: View {
                     if let d = store.abrpLastSent {
                         LabeledContent("Sent at", value: d.formatted(date: .omitted, time: .standard))
                     }
+                    if store.abrpPending > 0 {
+                        LabeledContent("Waiting to be sent", value: "\(store.abrpPending)")
+                        Button("Discard waiting data", role: .destructive) {
+                            model.abrp.queue.clear()
+                            store.abrpPending = 0
+                        }
+                    }
                 } header: { Text("ABRP") } footer: {
-                    Text("Touch and hold a field and choose Paste. Switch off the ABRP plugin on the OVMS (script eval abrp.send(0)), otherwise both send data for the same car.")
+                    Text("Touch and hold a field and choose Paste. Switch off the ABRP plugin on the OVMS (script eval abrp.send(0)), otherwise both send data for the same car. Without network the data waits (up to 24 hours) and is sent once there is network again, oldest first.")
                 }
 
                 Section {

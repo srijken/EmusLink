@@ -36,6 +36,7 @@ final class LiveStore: ObservableObject {
     @Published var abrpResult = String(localized: "Nothing sent yet")
     @Published var abrpOK = false
     @Published var abrpLastSent: Date?
+    @Published var abrpPending = 0
     @Published var location: CLLocation?
 
     var speedKmh: Double {
