@@ -38,6 +38,16 @@ xcodebuild test -project EmusLink.xcodeproj -scheme EmusLink -destination 'platf
 
 The unit tests are in `EmusLinkTests/`. See [AGENTS.md](AGENTS.md) for the code layout and conventions.
 
+## TestFlight
+
+With a paid Apple Developer account the app can be installed through TestFlight instead of from Xcode:
+
+1. Create an app in App Store Connect with your `APP_BUNDLE_ID` (once).
+2. Run `Tools/testflight.sh`. It archives a release build and uploads it with the Apple account that is signed in to Xcode. The build number is the time of the build, so every upload is newer than the last.
+3. Add yourself under TestFlight → Internal Testing (once) and install the app from the TestFlight app.
+
+`Tools/testflight.sh --archive-only` stops before the upload. A TestFlight build expires after 90 days.
+
 ## Screens
 
 - **Dashboard**: battery percentage with range, consumption and speed gauges, and tiles for power, average consumption, voltage, temperature and cells.

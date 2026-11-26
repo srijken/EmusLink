@@ -45,6 +45,8 @@ targets:
         EmusDefaultModuleName: $(DEFAULT_MODULE_NAME)
         ABRPDefaultAPIKey: $(ABRP_API_KEY)
         ABRPDefaultUserToken: $(ABRP_USER_TOKEN)
+        # Only HTTPS from the system: no export compliance question per TestFlight build.
+        ITSAppUsesNonExemptEncryption: false
         UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         UIBackgroundModes: [bluetooth-central, location]

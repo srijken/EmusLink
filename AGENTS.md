@@ -54,6 +54,7 @@ xcodebuild test -project EmusLink.xcodeproj -scheme EmusLink \
 | `DashboardView`, `ConsumptionView`, `InsightsView`, `SettingsView`, `Gauges` | SwiftUI screens |
 | `CarPlaySceneDelegate.swift` | CarPlay (Driving Task, templates only) |
 | `Localizable.xcstrings`, `InfoPlist.xcstrings` | String catalogs: UI texts and permission texts |
+| `Tools/testflight.sh` | Archives a release build and uploads it to TestFlight (build number = time of the build). Uploading is the user's call: do not run it without `--archive-only` unless asked |
 | `Assets.xcassets`, `Tools/make-icon.swift` | App icon; the PNG is drawn by the script (`swift Tools/make-icon.swift <output.png>`) |
 
 ## Conventions
