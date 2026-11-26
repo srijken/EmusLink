@@ -11,6 +11,9 @@ struct SettingsView: View {
     @State private var useLocation = true
     @State private var abrpOn = true
     @State private var saved = false
+    @State private var tempAlert = true
+    @State private var tempLow = TemperatureMonitor.defaultLow
+    @State private var tempHigh = TemperatureMonitor.defaultHigh
 
     var body: some View {
         NavigationStack {
@@ -42,6 +45,30 @@ struct SettingsView: View {
                         .onChange(of: useLocation) { _, v in model.location.enabled = v }
                 } header: { Text("Location") } footer: {
                     Text("Needed for speed, consumption per km and the position in ABRP. When iOS asks, choose ‘Always’ so it keeps working while the app is in the background.")
+                }
+
+                Section {
+                    Toggle("Warn about battery temperature", isOn: $tempAlert)
+                        .onChange(of: tempAlert) { _, v in
+                            model.temperature.enabled = v
+                            model.temperatureSettingsChanged()
+                        }
+                    Stepper(value: $tempLow, in: -30...20, step: 1) {
+                        LabeledContent("Too cold at", value: String(format: "%.0f °C", tempLow))
+                    }
+                    .onChange(of: tempLow) { _, v in
+                        model.temperature.lowLimit = v
+                        model.temperatureSettingsChanged()
+                    }
+                    Stepper(value: $tempHigh, in: 30...65, step: 1) {
+                        LabeledContent("Too hot at", value: String(format: "%.0f °C", tempHigh))
+                    }
+                    .onChange(of: tempHigh) { _, v in
+                        model.temperature.highLimit = v
+                        model.temperatureSettingsChanged()
+                    }
+                } header: { Text("Temperature warning") } footer: {
+                    Text("A notification and a banner (also on CarPlay) when the coldest or warmest part of the battery passes a limit. Check your battery's data sheet for its own limits.")
                 }
 
                 Section("Module") {
@@ -86,6 +113,9 @@ struct SettingsView: View {
             polling = model.ble.pollingEnabled
             useLocation = model.location.enabled
             abrpOn = model.abrp.enabled
+            tempAlert = model.temperature.enabled
+            tempLow = model.temperature.lowLimit
+            tempHigh = model.temperature.highLimit
             saved = false
         }
     }

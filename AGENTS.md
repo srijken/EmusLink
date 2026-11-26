@@ -34,7 +34,7 @@ xcodebuild test -project EmusLink.xcodeproj -scheme EmusLink \
 
 - GitHub Actions runs the same tests on every push to `main` and on pull requests (`.github/workflows/tests.yml`), without `Config/Local.xcconfig` and with the Xcode of the runner, which can be older than yours.
 - Unit tests live in `EmusLinkTests/` (XCTest, `@testable import EmusLink`), one file per component.
-- Run the tests after every change and add tests for new logic or a fixed bug. Covered: the protocol (CRC, sentences, decoding), `EnergyTracker` (averages, trips, the points of the consumption chart), `SpeedProfile`, `DailyDistance` and `ChargeAdvice`, `LiveStore` (range), the ABRP telemetry and URL, module matching, and the string catalogs.
+- Run the tests after every change and add tests for new logic or a fixed bug. Covered: the protocol (CRC, sentences, decoding), `EnergyTracker` (averages, trips, the points of the consumption chart), `SpeedProfile`, `DailyDistance` and `ChargeAdvice`, `BatteryHealth` and `TemperatureMonitor`, `LiveStore` (range), the ABRP telemetry and URL, module matching, and the string catalogs.
 - Keep logic testable: calculations belong in `EmusProtocol`, `EnergyTracker`, `LiveStore` or a static function, not in a View or a CoreBluetooth delegate. Pass time (`now:`/`at:`) and `UserDefaults` as parameters instead of hard-coding `Date()` and `.standard`; tests use their own `UserDefaults(suiteName:)`.
 - The tests run inside the app in the simulator (demo mode). Not tested automatically: Bluetooth, GPS, CarPlay and the layout of the screens. Check those in the simulator or on an iPhone.
 
@@ -47,12 +47,14 @@ xcodebuild test -project EmusLink.xcodeproj -scheme EmusLink \
 | `EnergyTracker.swift` | Consumption: ∫U·I dt from the BMS, distance from GPS, 100 m segments, trips |
 | `SpeedProfile.swift` | Consumption per speed band and the most efficient speed |
 | `DailyDistance.swift` | Distance per day, the learned distance per weekday, `ChargeAdvice` |
+| `BatteryHealth.swift` | SoH, cell spread and temperatures per day; `TemperatureMonitor` (limits with hysteresis) |
+| `AlertNotifier.swift` | Local notifications (temperature warning, also on CarPlay) |
 | `ABRPClient.swift` | Telemetry to the ABRP/Iternio API |
 | `LocationProvider.swift` | GPS |
 | `LiveStore.swift` | `ObservableObject` with everything the screens show (main thread only) |
 | `AppConfig.swift` | Defaults from the build configuration (xcconfig → Info.plist) |
 | `AppModel.swift` | Ties everything together (singleton); demo data in the simulator |
-| `DashboardView`, `ConsumptionView`, `InsightsView`, `SettingsView`, `Gauges` | SwiftUI screens |
+| `DashboardView`, `ConsumptionView`, `InsightsView`, `BatteryHealthView`, `SettingsView`, `Gauges` | SwiftUI screens |
 | `CarPlaySceneDelegate.swift` | CarPlay (Driving Task, templates only) |
 | `Localizable.xcstrings`, `InfoPlist.xcstrings` | String catalogs: UI texts and permission texts |
 | `Tools/testflight.sh` | Archives a release build and uploads it to TestFlight (build number = time of the build). Uploading is the user's call: do not run it without `--archive-only` unless asked |
@@ -61,7 +63,7 @@ xcodebuild test -project EmusLink.xcodeproj -scheme EmusLink \
 ## Conventions
 
 - **Language**: code, comments, documentation and commit messages are in English.
-- **Threads**: Bluetooth processing runs on `BLEManager.queue`; `LiveStore` is only updated on the main thread (at most a few times per second). `EnergyTracker`, `SpeedProfile`, `DailyDistance`, `ABRPClient` and `LocationProvider` are thread-safe with an `NSLock`. Keep it that way.
+- **Threads**: Bluetooth processing runs on `BLEManager.queue`; `LiveStore` is only updated on the main thread (at most a few times per second). `EnergyTracker`, `SpeedProfile`, `DailyDistance`, `BatteryHealth`, `TemperatureMonitor`, `ABRPClient` and `LocationProvider` are thread-safe with an `NSLock`. Keep it that way.
 - **Signs and units**: current from the BMS is positive while charging; power and consumption follow the ABRP convention (positive = consumption, negative = charging/regeneration). Consumption is in Wh/km.
 - **Writing to the module**: only to characteristic `BB460003`. `BB460004` is the module's name setting (writing renames the module!) and `0005` is probably configuration too. Do not touch them.
 - **Simulator**: no Bluetooth; `AppModel` runs on demo data there, including five weeks of made-up daily distances. Real BLE communication can only be tested on an iPhone near the car.

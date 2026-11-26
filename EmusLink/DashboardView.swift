@@ -13,6 +13,7 @@ struct DashboardView: View {
         ScrollView {
             VStack(spacing: 14) {
                 statusBar
+                temperatureBanner
 
                 // Battery
                 ZStack {
@@ -64,6 +65,28 @@ struct DashboardView: View {
             .padding()
         }
         .background(Color.black.ignoresSafeArea())
+    }
+
+    @ViewBuilder private var temperatureBanner: some View {
+        let s = store.snapshot
+        let monitor = AppModel.shared.temperature
+        if let lo = s.tempMin, let hi = s.tempMax,
+           let text = AlertNotifier.temperatureText(store.temperatureState, tempMin: lo, tempMax: hi,
+                                                    low: monitor.lowLimit, high: monitor.highLimit) {
+            let hot = store.temperatureState == .hot
+            HStack(alignment: .top, spacing: 10) {
+                Image(systemName: hot ? "thermometer.high" : "thermometer.snowflake")
+                    .font(.title2)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(verbatim: text.title).font(.headline)
+                    Text(verbatim: text.body).font(.subheadline)
+                }
+                Spacer(minLength: 0)
+            }
+            .foregroundStyle(hot ? .red : .cyan)
+            .padding(12)
+            .background(RoundedRectangle(cornerRadius: 14).fill((hot ? Color.red : Color.cyan).opacity(0.15)))
+        }
     }
 
     private var statusBar: some View {

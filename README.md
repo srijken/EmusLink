@@ -52,8 +52,9 @@ With a paid Apple Developer account the app can be installed through TestFlight 
 
 - **Dashboard**: battery percentage with range, consumption and speed gauges, and tiles for power, average consumption, voltage, temperature and cells.
 - **Consumption**: consumption over the last 10, 25 or 50 km as a filled line (regeneration below zero), with the average and the projected range for that distance, plus averages for the trip / 10 km / 100 km and starting a new trip.
-- **Insights**: the most efficient speed (consumption per speed band of 10 km/h, with the range of speeds that is within 6 % of the lowest) and learning from trips (distance per day of the week: set, learned and measured, with the charge needed for tomorrow). Both fill up as you drive; the charge figure is advice only, the app does not control charging.
-- **Settings**: ABRP, GPS, module, diagnostics, version and log.
+- **Insights**: the most efficient speed (consumption per speed band of 10 km/h, with the range of speeds that is within 6 % of the lowest) and learning from trips (distance per day of the week: set, learned and measured, with the charge needed for tomorrow). Both fill up as you drive; the charge figure is advice only, the app does not control charging. Below that, battery health: the state of health per day and the cell spread at rest (the difference between the lowest and highest cell while hardly any current flows), with the last 7 days compared to the 30 before.
+- **Temperature warning**: a notification, a banner on the dashboard and an alert on CarPlay when the coldest or warmest part of the pack passes a limit (default 0 °C and 45 °C, with 3 °C hysteresis).
+- **Settings**: ABRP, GPS, temperature warning, module, diagnostics, version and log.
 
 ## Languages
 

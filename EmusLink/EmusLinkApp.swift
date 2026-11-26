@@ -4,6 +4,7 @@ import SwiftUI
 struct EmusLinkApp: App {
     // Also created when iOS launches the app in the background for Bluetooth.
     private let model = AppModel.shared
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
         WindowGroup {
@@ -19,7 +20,13 @@ struct EmusLinkApp: App {
             }
             .environmentObject(model.store)
             .preferredColorScheme(.dark)
-            .onAppear { model.ble.reconnect() }
+            .onAppear {
+                model.ble.reconnect()
+                AlertNotifier.setUp()
+            }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .background { model.health.flush() }
         }
     }
 }

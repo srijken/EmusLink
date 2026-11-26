@@ -31,6 +31,8 @@ final class LiveStore: ObservableObject {
     @Published var speedProfile = SpeedSummary()
     @Published var week: [WeekdayPlan] = []
     @Published var todayKm = 0.0
+    @Published var health = HealthSummary()
+    @Published var temperatureState: TemperatureState = .normal
     @Published var abrpResult = String(localized: "Nothing sent yet")
     @Published var abrpOK = false
     @Published var abrpLastSent: Date?

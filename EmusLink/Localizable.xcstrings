@@ -11,6 +11,16 @@
         }
       }
     },
+    "%@ percentage points in %lld days" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ procentpunt in %lld dagen"
+          }
+        }
+      }
+    },
     "10 km" : {
       "localizations" : {
         "nl" : {
@@ -27,6 +37,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "100 km"
+          }
+        }
+      }
+    },
+    "A notification and a banner (also on CarPlay) when the coldest or warmest part of the battery passes a limit. Check your battery's data sheet for its own limits." : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Een melding en een balk (ook op CarPlay) als het koudste of warmste deel van de accu een grens passeert. Kijk in het datasheet van je accu voor de eigen grenzen."
           }
         }
       }
@@ -101,12 +121,52 @@
         }
       }
     },
+    "Average of the last 7 days" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gemiddelde van de laatste 7 dagen"
+          }
+        }
+      }
+    },
     "Battery" : {
       "localizations" : {
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Accu"
+          }
+        }
+      }
+    },
+    "Battery cold" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accu koud"
+          }
+        }
+      }
+    },
+    "Battery health" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accugezondheid"
+          }
+        }
+      }
+    },
+    "Battery hot" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accu warm"
           }
         }
       }
@@ -147,6 +207,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bundle-ID"
+          }
+        }
+      }
+    },
+    "Cell spread" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Celspreiding"
+          }
+        }
+      }
+    },
+    "Cell spread at rest" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Celspreiding in rust"
           }
         }
       }
@@ -431,6 +511,36 @@
         }
       }
     },
+    "Good" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Goed"
+          }
+        }
+      }
+    },
+    "High" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoog"
+          }
+        }
+      }
+    },
+    "Highest battery temperature %lld °C (limit %lld °C)." : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoogste accutemperatuur %lld °C (grens %lld °C)."
+          }
+        }
+      }
+    },
     "History kept" : {
       "localizations" : {
         "nl" : {
@@ -467,6 +577,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Inzicht"
+          }
+        }
+      }
+    },
+    "Keep an eye on it" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In de gaten houden"
           }
         }
       }
@@ -557,6 +677,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Laagst"
+          }
+        }
+      }
+    },
+    "Lowest battery temperature %lld °C (limit %lld °C): less power and regeneration." : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laagste accutemperatuur %lld °C (grens %lld °C): minder vermogen en terugwinning."
           }
         }
       }
@@ -671,6 +801,16 @@
         }
       }
     },
+    "Nothing measured yet. One value per day is kept; the charts fill up as you drive." : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nog niets gemeten. Per dag wordt één waarde bewaard; de grafieken vullen zich terwijl je rijdt."
+          }
+        }
+      }
+    },
     "Nothing sent yet" : {
       "localizations" : {
         "nl" : {
@@ -717,6 +857,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Notify aan"
+          }
+        }
+      }
+    },
+    "OK" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
           }
         }
       }
@@ -951,6 +1101,26 @@
         }
       }
     },
+    "SoH" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SoH"
+          }
+        }
+      }
+    },
+    "SoH is the BMS's own estimate of the remaining capacity. Cell spread is the difference between the lowest and the highest cell while hardly any current flows; under load it is always larger. The BMS reports cells in steps of 10 mV. A spread that keeps growing points to a cell that ages faster or a pack that needs balancing." : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SoH is de eigen schatting van het BMS van de resterende capaciteit. Celspreiding is het verschil tussen de laagste en de hoogste cel terwijl er nauwelijks stroom loopt; onder belasting is die altijd groter. Het BMS meldt cellen in stappen van 10 mV. Een spreiding die blijft groeien wijst op een cel die sneller veroudert of een pakket dat gebalanceerd moet worden."
+          }
+        }
+      }
+    },
     "Speed" : {
       "localizations" : {
         "nl" : {
@@ -971,6 +1141,16 @@
         }
       }
     },
+    "State of health" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gezondheid (SoH)"
+          }
+        }
+      }
+    },
     "Status" : {
       "localizations" : {
         "nl" : {
@@ -981,12 +1161,42 @@
         }
       }
     },
+    "Temperature warning" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temperatuurwaarschuwing"
+          }
+        }
+      }
+    },
     "The 10 km and 100 km averages and the chart will start over." : {
       "localizations" : {
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "De gemiddelden over 10 en 100 km en de grafiek beginnen dan opnieuw."
+          }
+        }
+      }
+    },
+    "The 30 days before" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De 30 dagen daarvoor"
+          }
+        }
+      }
+    },
+    "The spread is growing" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De spreiding groeit"
           }
         }
       }
@@ -1003,6 +1213,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Morgen (%1$@): ongeveer %2$lld km"
+          }
+        }
+      }
+    },
+    "Too cold at" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te koud bij"
+          }
+        }
+      }
+    },
+    "Too hot at" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te warm bij"
           }
         }
       }
@@ -1107,6 +1337,16 @@
         }
       }
     },
+    "Warn about battery temperature" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waarschuwen bij accutemperatuur"
+          }
+        }
+      }
+    },
     "Wh/km" : {
       "localizations" : {
         "nl" : {
@@ -1133,6 +1373,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "km geleden"
+          }
+        }
+      }
+    },
+    "mV" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mV"
           }
         }
       }

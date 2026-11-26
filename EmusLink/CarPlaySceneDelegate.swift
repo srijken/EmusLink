@@ -7,6 +7,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
     private var interfaceController: CPInterfaceController?
     private var grid: CPGridTemplate?
     private var timer: Timer?
+    private var shownTemperature: TemperatureState = .normal
 
     func templateApplicationScene(_ scene: CPTemplateApplicationScene,
                                   didConnect interfaceController: CPInterfaceController) {
@@ -17,7 +18,27 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         timer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: true) { [weak self] _ in
             guard let self, let grid = self.grid else { return }
             grid.updateGridButtons(self.makeButtons())
+            self.checkTemperature()
         }
+    }
+
+    /// Shows an alert once each time the battery becomes too hot or too cold.
+    private func checkTemperature() {
+        let store = AppModel.shared.store
+        let state = store.temperatureState
+        guard state != shownTemperature else { return }
+        shownTemperature = state
+        let s = store.snapshot, monitor = AppModel.shared.temperature
+        guard let interfaceController, interfaceController.presentedTemplate == nil,
+              let lo = s.tempMin, let hi = s.tempMax,
+              let text = AlertNotifier.temperatureText(state, tempMin: lo, tempMax: hi,
+                                                       low: monitor.lowLimit, high: monitor.highLimit)
+        else { return }
+        let ok = CPAlertAction(title: String(localized: "OK"), style: .default) { [weak self] _ in
+            self?.interfaceController?.dismissTemplate(animated: true, completion: nil)
+        }
+        let alert = CPAlertTemplate(titleVariants: [text.body, text.title], actions: [ok])
+        interfaceController.presentTemplate(alert, animated: true, completion: nil)
     }
 
     func templateApplicationScene(_ scene: CPTemplateApplicationScene,
@@ -67,6 +88,8 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
             CPInformationItem(title: String(localized: "Power"), detail: "\(fmt(s.powerKW, "%.1f")) kW"),
             CPInformationItem(title: String(localized: "Battery temperature"), detail: "\(fmt(s.tempMin, "%.0f")) – \(fmt(s.tempMax, "%.0f")) °C"),
             CPInformationItem(title: String(localized: "Remaining"), detail: "\(fmt(store.remainingKWh, "%.1f")) kWh"),
+            CPInformationItem(title: String(localized: "Cell spread"), detail: (s.cellMin != nil && s.cellMax != nil)
+                ? String(format: "%.0f mV", (s.cellMax! - s.cellMin!) * 1000) : "–"),
         ]
         let info = CPInformationTemplate(title: String(localized: "Details"), layout: .twoColumn, items: items, actions: [])
         interfaceController?.pushTemplate(info, animated: true, completion: nil)

@@ -13,6 +13,7 @@ struct InsightsView: View {
                 VStack(spacing: 14) {
                     EfficientSpeedCard(summary: store.speedProfile)
                     tripsCard
+                    BatteryHealthCard(summary: store.health)
                     Button("Clear measurements", role: .destructive) { confirmClear = true }
                         .buttonStyle(.bordered)
                 }
