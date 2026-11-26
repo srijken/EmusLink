@@ -39,6 +39,8 @@
 	<string>Keep tracking consumption and sending the position to ABRP in the background.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Speed and distance for the consumption per km, and the position for ABRP.</string>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

@@ -8,6 +8,11 @@ options:
 configFiles:
   Debug: Config/Shared.xcconfig
   Release: Config/Shared.xcconfig
+# The version for the app and its widget extension (they must match).
+settings:
+  base:
+    MARKETING_VERSION: "0.4"
+    CURRENT_PROJECT_VERSION: "4"
 targets:
   EmusLink:
     type: application
@@ -19,11 +24,12 @@ targets:
       - path: EmusLink
         excludes:
           - "*.entitlements"
+      - path: Shared
+    dependencies:
+      - target: EmusLinkWidgets
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: $(APP_BUNDLE_ID)
-        MARKETING_VERSION: "0.4"
-        CURRENT_PROJECT_VERSION: "4"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         SWIFT_VERSION: "5.0"
         TARGETED_DEVICE_FAMILY: "1"
@@ -52,6 +58,7 @@ targets:
         UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         UIBackgroundModes: [bluetooth-central, location]
+        NSSupportsLiveActivities: true
         NSBluetoothAlwaysUsageDescription: "EmusLink reads the battery data from the EMUS BMS over Bluetooth."
         NSLocationWhenInUseUsageDescription: "Speed and distance for the consumption per km, and the position for ABRP."
         NSLocationAlwaysAndWhenInUseUsageDescription: "Keep tracking consumption and sending the position to ABRP in the background."
@@ -62,6 +69,35 @@ targets:
               - UISceneConfigurationName: CarPlay
                 UISceneClassName: CPTemplateApplicationScene
                 UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).CarPlaySceneDelegate
+  # Live Activity while driving (lock screen, Dynamic Island, CarPlay). iOS 18 for the
+  # CarPlay/Watch size; on iOS 17 the app runs without it.
+  EmusLinkWidgets:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "18.0"
+    sources:
+      - path: EmusLinkWidgets
+        excludes:
+          - Info.plist
+      - path: Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(APP_BUNDLE_ID).widgets
+        SWIFT_VERSION: "5.0"
+        TARGETED_DEVICE_FAMILY: "1"
+        CODE_SIGN_STYLE: Automatic
+        SWIFT_EMIT_LOC_STRINGS: YES
+        LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+        APPLICATION_EXTENSION_API_ONLY: YES
+    info:
+      path: EmusLinkWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: EmusLink
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleLocalizations: [en, nl]
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
   EmusLinkTests:
     type: bundle.unit-test
     platform: iOS

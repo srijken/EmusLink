@@ -181,6 +181,16 @@
         }
       }
     },
+    "Battery, range and consumption on the lock screen, in the Dynamic Island and on the CarPlay screen. It starts when the app or its CarPlay screen is open while the module is connected, and ends two minutes after the car is switched off." : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accu, actieradius en verbruik op het toegangsscherm, in het Dynamic Island en op het CarPlay-scherm. Start wanneer de app of het CarPlay-scherm open is terwijl de module verbonden is, en stopt twee minuten nadat de auto is uitgezet."
+          }
+        }
+      }
+    },
     "Bluetooth off" : {
       "localizations" : {
         "nl" : {
@@ -677,6 +687,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Geleerd telt vanaf 3 metingen per dag; tot die tijd geldt de ingestelde afstand. Het is een voorzichtige gewone dag: de afstand die ongeveer drie van de vier laatste dagen dekt. De app kan het laden niet aansturen; dit is alleen een advies."
+          }
+        }
+      }
+    },
+    "Live Activity" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live Activity"
+          }
+        }
+      }
+    },
+    "Live Activity not started: %@" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live Activity niet gestart: %@"
+          }
+        }
+      }
+    },
+    "Live Activity while driving" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live Activity tijdens het rijden"
           }
         }
       }

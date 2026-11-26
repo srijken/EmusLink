@@ -22,6 +22,8 @@ final class AppModel {
     let daily = DailyDistance()
     let health = BatteryHealth()
     let temperature = TemperatureMonitor()
+    let liveActivity = LiveActivityController()
+    private var activityTimer: Timer?
 
     private var lastEnergyPublish = Date.distantPast
     private var lastHealthPublish = Date.distantPast
@@ -52,6 +54,12 @@ final class AppModel {
         store.energy = energy.summary()
         store.abrpPending = abrp.queue.count
         refreshInsights()
+
+        // Also runs in the background while Bluetooth or GPS keeps the app alive.
+        activityTimer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
+            guard let self else { return }
+            self.liveActivity.tick(store: self.store)
+        }
 
         NotificationCenter.default.addObserver(forName: NSUbiquitousKeyValueStore.didChangeExternallyNotification,
                                                object: nil, queue: nil) { [weak self] _ in

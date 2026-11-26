@@ -6,10 +6,10 @@ import XCTest
 final class LocalizationTests: XCTestCase {
     private let languages = ["nl"]
 
-    private func catalog(_ name: String) throws -> [String: [String: Any]] {
+    private func catalog(_ name: String, folder: String = "EmusLink") throws -> [String: [String: Any]] {
         let url = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent().deletingLastPathComponent()
-            .appendingPathComponent("EmusLink/\(name).xcstrings")
+            .appendingPathComponent("\(folder)/\(name).xcstrings")
         let json = try JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any]
         return try XCTUnwrap(json?["strings"] as? [String: [String: Any]])
     }
@@ -32,6 +32,17 @@ final class LocalizationTests: XCTestCase {
     func testEveryStringIsTranslated() throws {
         let strings = try catalog("Localizable")
         XCTAssertGreaterThan(strings.count, 50)
+        try checkTranslations(strings)
+    }
+
+    /// The widget extension has its own catalog: it cannot read the app's.
+    func testEveryWidgetStringIsTranslated() throws {
+        let strings = try catalog("Localizable", folder: "EmusLinkWidgets")
+        XCTAssertFalse(strings.isEmpty)
+        try checkTranslations(strings)
+    }
+
+    private func checkTranslations(_ strings: [String: [String: Any]]) throws {
         for (key, entry) in strings {
             XCTAssertNotEqual(entry["extractionState"] as? String, "stale", "no longer used in the code: \(key)")
             for language in languages {

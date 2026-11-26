@@ -12,6 +12,7 @@ struct SettingsView: View {
     @State private var abrpOn = true
     @State private var saved = false
     @State private var tempAlert = true
+    @State private var liveActivity = true
     @State private var tempLow = TemperatureMonitor.defaultLow
     @State private var tempHigh = TemperatureMonitor.defaultHigh
 
@@ -52,6 +53,13 @@ struct SettingsView: View {
                         .onChange(of: useLocation) { _, v in model.location.enabled = v }
                 } header: { Text("Location") } footer: {
                     Text("Needed for speed, consumption per km and the position in ABRP. When iOS asks, choose ‘Always’ so it keeps working while the app is in the background.")
+                }
+
+                Section {
+                    Toggle("Live Activity while driving", isOn: $liveActivity)
+                        .onChange(of: liveActivity) { _, v in model.liveActivity.enabled = v }
+                } header: { Text("Live Activity") } footer: {
+                    Text("Battery, range and consumption on the lock screen, in the Dynamic Island and on the CarPlay screen. It starts when the app or its CarPlay screen is open while the module is connected, and ends two minutes after the car is switched off.")
                 }
 
                 Section {
@@ -132,6 +140,7 @@ struct SettingsView: View {
             useLocation = model.location.enabled
             abrpOn = model.abrp.enabled
             tempAlert = model.temperature.enabled
+            liveActivity = model.liveActivity.enabled
             tempLow = model.temperature.lowLimit
             tempHigh = model.temperature.highLimit
             saved = false

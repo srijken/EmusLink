@@ -19,7 +19,7 @@ xcodebuild -project EmusLink.xcodeproj -scheme EmusLink \
 - Change build settings in `project.yml`, never in `EmusLink.xcodeproj`.
 - Without `Config/Local.xcconfig` the project builds for the simulator with the defaults from `Config/Shared.xcconfig`. An iPhone needs your own `DEVELOPMENT_TEAM`.
 - `EmusLink/Info.plist` is overwritten by XcodeGen: edit `info.properties` in `project.yml`.
-- Raise `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` in `project.yml` with every change the user installs. Settings → About shows the version, the build time and the bundle ID.
+- Raise `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` in `project.yml` (project-level `settings`, shared by the app and the widget extension) with every change the user installs. Settings → About shows the version, the build time and the bundle ID.
 - Keep `APP_BUNDLE_ID` the same between builds: iOS treats another bundle ID as another app, which is installed next to the old one and starts without its data.
 
 ## Testing
@@ -34,7 +34,7 @@ xcodebuild test -project EmusLink.xcodeproj -scheme EmusLink \
 
 - GitHub Actions runs the same tests on every push to `main` and on pull requests (`.github/workflows/tests.yml`), without `Config/Local.xcconfig` and with the Xcode of the runner, which can be older than yours.
 - Unit tests live in `EmusLinkTests/` (XCTest, `@testable import EmusLink`), one file per component.
-- Run the tests after every change and add tests for new logic or a fixed bug. Covered: the protocol (CRC, sentences, decoding), `EnergyTracker` (averages, trips, the points of the consumption chart), `SpeedProfile`, `DailyDistance` and `ChargeAdvice`, `BatteryHealth` and `TemperatureMonitor`, `CloudBackup`, `LiveStore` (range), the ABRP telemetry, URL and offline queue, module matching, and the string catalogs.
+- Run the tests after every change and add tests for new logic or a fixed bug. Covered: the protocol (CRC, sentences, decoding), `EnergyTracker` (averages, trips, the points of the consumption chart), `SpeedProfile`, `DailyDistance` and `ChargeAdvice`, `BatteryHealth` and `TemperatureMonitor`, `CloudBackup`, the Live Activity's content and throttling, `LiveStore` (range), the ABRP telemetry, URL and offline queue, module matching, and the string catalogs.
 - Keep logic testable: calculations belong in `EmusProtocol`, `EnergyTracker`, `LiveStore` or a static function, not in a View or a CoreBluetooth delegate. Pass time (`now:`/`at:`) and `UserDefaults` as parameters instead of hard-coding `Date()` and `.standard`; tests use their own `UserDefaults(suiteName:)`.
 - The tests run inside the app in the simulator (demo mode). Not tested automatically: Bluetooth, GPS, CarPlay and the layout of the screens. Check those in the simulator or on an iPhone.
 
@@ -48,6 +48,9 @@ xcodebuild test -project EmusLink.xcodeproj -scheme EmusLink \
 | `SpeedProfile.swift` | Consumption per speed band and the most efficient speed |
 | `DailyDistance.swift` | Distance per day, the learned distance per weekday, `ChargeAdvice` |
 | `BatteryHealth.swift` | SoH, cell spread and temperatures per day; `TemperatureMonitor` (limits with hysteresis) |
+| `LiveActivityController.swift` | Starts, updates and ends the Live Activity |
+| `Shared/DriveAttributes.swift` | The Live Activity's data, shared by the app and the widget extension |
+| `EmusLinkWidgets/` | Widget extension: the Live Activity's views (lock screen, Dynamic Island, CarPlay/Watch), with its own string catalog |
 | `CloudBackup.swift` | Backup of the learned data and settings to iCloud key-value storage |
 | `AlertNotifier.swift` | Local notifications (temperature warning, also on CarPlay) |
 | `ABRPClient.swift` | Telemetry to the ABRP/Iternio API; `TelemetryQueue` keeps what could not be sent |
@@ -80,7 +83,8 @@ The app is available in English (source language) and Dutch.
 - Text that must not be translated (values, units, device names) goes through `Text(verbatim:)` or a `String` variable.
 - When you add or change a text, add the Dutch translation to the catalog in the same change. Building in Xcode adds new keys to the catalog automatically; from the command line, add the key by hand. `LocalizationTests` fails on a missing translation, on mismatched placeholders (`%@`, `%lld`) and on stale entries.
 - Permission texts (Bluetooth, location) are in `project.yml` (English) and translated in `EmusLink/InfoPlist.xcstrings`.
-- Adding a language: add it to every entry in both catalogs, to `CFBundleLocalizations` in `project.yml` and to `languages` in `LocalizationTests`.
+- The widget extension has its own `EmusLinkWidgets/Localizable.xcstrings`: it cannot read the app's catalog.
+- Adding a language: add it to every entry in all three catalogs, to `CFBundleLocalizations` in `project.yml` and to `languages` in `LocalizationTests`.
 - Numbers are formatted with `String(format:)` and are not locale-aware yet (always a decimal point).
 
 ## Configuration and secrets
