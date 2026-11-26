@@ -1,0 +1,45 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: macos-26
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate the Xcode project
+        run: |
+          which xcodegen || brew install xcodegen
+          xcodegen
+
+      # Without Config/Local.xcconfig the defaults from Config/Shared.xcconfig are used.
+      - name: Run the unit tests
+        run: |
+          xcodebuild -version
+          SIMULATOR=$(xcrun simctl list devices available -j |
+            jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')
+          echo "Simulator: $SIMULATOR"
+          set -o pipefail
+          xcodebuild test -project EmusLink.xcodeproj -scheme EmusLink \
+            -destination "platform=iOS Simulator,id=$SIMULATOR" \
+            -resultBundlePath TestResults.xcresult | tail -n 60
+
+      - name: Keep the test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestResults
+          path: TestResults.xcresult

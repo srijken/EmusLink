@@ -36,7 +36,7 @@ The ABRP credentials and the module name can also be set in the app itself (see 
 xcodebuild test -project EmusLink.xcodeproj -scheme EmusLink -destination 'platform=iOS Simulator,name=iPhone 18 Pro'
 ```
 
-The unit tests are in `EmusLinkTests/`. See [AGENTS.md](AGENTS.md) for the code layout and conventions.
+The unit tests are in `EmusLinkTests/`. GitHub Actions runs them on every push. See [AGENTS.md](AGENTS.md) for the code layout and conventions.
 
 ## TestFlight
 

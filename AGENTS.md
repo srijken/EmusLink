@@ -32,6 +32,7 @@ xcodebuild test -project EmusLink.xcodeproj -scheme EmusLink \
 
 (Pick a simulator that is installed: `xcrun simctl list devices available`.)
 
+- GitHub Actions runs the same tests on every push to `main` and on pull requests (`.github/workflows/tests.yml`), without `Config/Local.xcconfig` and with the Xcode of the runner, which can be older than yours.
 - Unit tests live in `EmusLinkTests/` (XCTest, `@testable import EmusLink`), one file per component.
 - Run the tests after every change and add tests for new logic or a fixed bug. Covered: the protocol (CRC, sentences, decoding), `EnergyTracker` (averages, trips, the points of the consumption chart), `SpeedProfile`, `DailyDistance` and `ChargeAdvice`, `LiveStore` (range), the ABRP telemetry and URL, module matching, and the string catalogs.
 - Keep logic testable: calculations belong in `EmusProtocol`, `EnergyTracker`, `LiveStore` or a static function, not in a View or a CoreBluetooth delegate. Pass time (`now:`/`at:`) and `UserDefaults` as parameters instead of hard-coding `Date()` and `.standard`; tests use their own `UserDefaults(suiteName:)`.
