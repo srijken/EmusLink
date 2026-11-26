@@ -631,6 +631,16 @@
         }
       }
     },
+    "Last backup" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laatste back-up"
+          }
+        }
+      }
+    },
     "Last result" : {
       "localizations" : {
         "nl" : {
@@ -981,6 +991,16 @@
         }
       }
     },
+    "Restored from iCloud" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teruggezet uit iCloud"
+          }
+        }
+      }
+    },
     "Save" : {
       "localizations" : {
         "nl" : {
@@ -1211,6 +1231,16 @@
         }
       }
     },
+    "The learned data and the settings are copied to your iCloud every few minutes and restored after a reinstall or on a new iPhone. After a fresh install the app waits up to 10 minutes for the backup before it writes a new one." : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De geleerde gegevens en de instellingen worden om de paar minuten naar je iCloud gekopieerd en teruggezet na een herinstallatie of op een nieuwe iPhone. Na een verse installatie wacht de app tot 10 minuten op de back-up voordat hij een nieuwe schrijft."
+          }
+        }
+      }
+    },
     "The spread is growing" : {
       "localizations" : {
         "nl" : {
@@ -1397,6 +1427,16 @@
         }
       }
     },
+    "iCloud" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud"
+          }
+        }
+      }
+    },
     "km ago" : {
       "localizations" : {
         "nl" : {
@@ -1413,6 +1453,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "mV"
+          }
+        }
+      }
+    },
+    "not yet" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nog niet"
           }
         }
       }
@@ -1443,6 +1493,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "range: nog geen verbruik"
+          }
+        }
+      }
+    },
+    "waiting for iCloud" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "wacht op iCloud"
           }
         }
       }

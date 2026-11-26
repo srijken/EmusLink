@@ -71,6 +71,16 @@ final class BatteryHealth {
     init(defaults: UserDefaults = .standard, calendar: Calendar = .current) {
         self.defaults = defaults
         self.calendar = calendar
+        load()
+    }
+
+    /// Reads the saved state again, for example after a restore from iCloud.
+    func reload() {
+        lock.lock(); defer { lock.unlock() }
+        load()
+    }
+
+    private func load() {
         if let data = defaults.data(forKey: storeKey),
            let stored = try? JSONDecoder().decode([String: HealthDay].self, from: data) {
             days = stored

@@ -26,7 +26,7 @@ struct EmusLinkApp: App {
             }
         }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .background { model.health.flush() }
+            if phase == .background { model.saveAll() }
         }
     }
 }

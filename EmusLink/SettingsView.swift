@@ -97,6 +97,17 @@ struct SettingsView: View {
                     if let w = store.writeCharacteristic { LabeledContent("Writing via", value: w) }
                 }
 
+                Section {
+                    if let last = model.backup.lastBackup {
+                        LabeledContent("Last backup", value: last.formatted(date: .abbreviated, time: .shortened))
+                    } else {
+                        LabeledContent("Last backup", value: model.backup.isReady
+                                       ? String(localized: "not yet") : String(localized: "waiting for iCloud"))
+                    }
+                } header: { Text("iCloud") } footer: {
+                    Text("The learned data and the settings are copied to your iCloud every few minutes and restored after a reinstall or on a new iPhone. After a fresh install the app waits up to 10 minutes for the backup before it writes a new one.")
+                }
+
                 Section("About") {
                     LabeledContent("Version", value: AppConfig.version)
                     if let built = AppConfig.buildDate {

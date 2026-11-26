@@ -30,9 +30,11 @@ targets:
         CODE_SIGN_STYLE: Automatic
         SWIFT_EMIT_LOC_STRINGS: YES
         LOCALIZATION_PREFERS_STRING_CATALOGS: YES
-        # CarPlay entitlement in the simulator only. On an iPhone it only works once
-        # Apple has approved the "Driving Task" entitlement for your account:
-        # then remove the [sdk=...] restriction.
+        # iCloud key-value storage (backup of the learned data) on every build.
+        CODE_SIGN_ENTITLEMENTS: EmusLink/EmusLink.entitlements
+        # CarPlay entitlement in the simulator only (CarPlay.entitlements also holds iCloud).
+        # On an iPhone it only works once Apple has approved the "Driving Task" entitlement
+        # for your account: then add it to EmusLink.entitlements and remove this line.
         "CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]": EmusLink/CarPlay.entitlements
     info:
       path: EmusLink/Info.plist

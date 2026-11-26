@@ -62,6 +62,16 @@ final class SpeedProfile {
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
+        load()
+    }
+
+    /// Reads the saved state again, for example after a restore from iCloud.
+    func reload() {
+        lock.lock(); defer { lock.unlock() }
+        load()
+    }
+
+    private func load() {
         if let data = defaults.data(forKey: storeKey),
            let saved = try? JSONDecoder().decode([SpeedBand].self, from: data), saved.count == Self.bandCount {
             bands = saved

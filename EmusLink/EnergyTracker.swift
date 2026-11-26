@@ -65,6 +65,12 @@ final class EnergyTracker {
         load()
     }
 
+    /// Reads the saved state again, for example after a restore from iCloud.
+    func reload() {
+        lock.lock(); defer { lock.unlock() }
+        load()
+    }
+
     // MARK: - Input
 
     /// Power drawn from the battery in watts (positive = consumption, negative = regeneration/charging).

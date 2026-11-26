@@ -34,7 +34,7 @@ xcodebuild test -project EmusLink.xcodeproj -scheme EmusLink \
 
 - GitHub Actions runs the same tests on every push to `main` and on pull requests (`.github/workflows/tests.yml`), without `Config/Local.xcconfig` and with the Xcode of the runner, which can be older than yours.
 - Unit tests live in `EmusLinkTests/` (XCTest, `@testable import EmusLink`), one file per component.
-- Run the tests after every change and add tests for new logic or a fixed bug. Covered: the protocol (CRC, sentences, decoding), `EnergyTracker` (averages, trips, the points of the consumption chart), `SpeedProfile`, `DailyDistance` and `ChargeAdvice`, `BatteryHealth` and `TemperatureMonitor`, `LiveStore` (range), the ABRP telemetry, URL and offline queue, module matching, and the string catalogs.
+- Run the tests after every change and add tests for new logic or a fixed bug. Covered: the protocol (CRC, sentences, decoding), `EnergyTracker` (averages, trips, the points of the consumption chart), `SpeedProfile`, `DailyDistance` and `ChargeAdvice`, `BatteryHealth` and `TemperatureMonitor`, `CloudBackup`, `LiveStore` (range), the ABRP telemetry, URL and offline queue, module matching, and the string catalogs.
 - Keep logic testable: calculations belong in `EmusProtocol`, `EnergyTracker`, `LiveStore` or a static function, not in a View or a CoreBluetooth delegate. Pass time (`now:`/`at:`) and `UserDefaults` as parameters instead of hard-coding `Date()` and `.standard`; tests use their own `UserDefaults(suiteName:)`.
 - The tests run inside the app in the simulator (demo mode). Not tested automatically: Bluetooth, GPS, CarPlay and the layout of the screens. Check those in the simulator or on an iPhone.
 
@@ -48,6 +48,7 @@ xcodebuild test -project EmusLink.xcodeproj -scheme EmusLink \
 | `SpeedProfile.swift` | Consumption per speed band and the most efficient speed |
 | `DailyDistance.swift` | Distance per day, the learned distance per weekday, `ChargeAdvice` |
 | `BatteryHealth.swift` | SoH, cell spread and temperatures per day; `TemperatureMonitor` (limits with hysteresis) |
+| `CloudBackup.swift` | Backup of the learned data and settings to iCloud key-value storage |
 | `AlertNotifier.swift` | Local notifications (temperature warning, also on CarPlay) |
 | `ABRPClient.swift` | Telemetry to the ABRP/Iternio API; `TelemetryQueue` keeps what could not be sent |
 | `LocationProvider.swift` | GPS |
@@ -66,6 +67,7 @@ xcodebuild test -project EmusLink.xcodeproj -scheme EmusLink \
 - **Threads**: Bluetooth processing runs on `BLEManager.queue`; `LiveStore` is only updated on the main thread (at most a few times per second). `EnergyTracker`, `SpeedProfile`, `DailyDistance`, `BatteryHealth`, `TemperatureMonitor`, `ABRPClient` and `LocationProvider` are thread-safe with an `NSLock`. Keep it that way.
 - **Signs and units**: current from the BMS is positive while charging; power and consumption follow the ABRP convention (positive = consumption, negative = charging/regeneration). Consumption is in Wh/km.
 - **Writing to the module**: only to characteristic `BB460003`. `BB460004` is the module's name setting (writing renames the module!) and `0005` is probably configuration too. Do not touch them.
+- **Persisted data**: a new `UserDefaults` key that should survive a reinstall goes into `CloudBackup.keys`; a component that keeps it in memory needs a `reload()` that `AppModel.cloudChanged()` calls. Device-specific values (the module's identifier) and the ABRP queue are not backed up.
 - **Simulator**: no Bluetooth; `AppModel` runs on demo data there, including five weeks of made-up daily distances. Real BLE communication can only be tested on an iPhone near the car.
 
 ## Localization

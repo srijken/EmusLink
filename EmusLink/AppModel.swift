@@ -4,7 +4,14 @@ import CoreLocation
 /// Ties everything together. Exists once and is created on every launch,
 /// also when iOS launches the app in the background for Bluetooth (there is no UI then).
 final class AppModel {
-    static let shared = AppModel()
+    /// The backup is restored first: the components below read their saved state when they are created.
+    static let shared: AppModel = {
+        let backup = CloudBackup()
+        backup.restoreIfNeeded()
+        return AppModel(backup: backup)
+    }()
+
+    let backup: CloudBackup
 
     let store = LiveStore()
     let ble = BLEManager()
@@ -18,9 +25,11 @@ final class AppModel {
 
     private var lastEnergyPublish = Date.distantPast
     private var lastHealthPublish = Date.distantPast
+    private var lastBackup = Date()
     private var demoTimer: DispatchSourceTimer?
 
-    private init() {
+    private init(backup: CloudBackup) {
+        self.backup = backup
         ble.store = store
         abrp.store = store
 
@@ -43,6 +52,11 @@ final class AppModel {
         store.energy = energy.summary()
         store.abrpPending = abrp.queue.count
         refreshInsights()
+
+        NotificationCenter.default.addObserver(forName: NSUbiquitousKeyValueStore.didChangeExternallyNotification,
+                                               object: nil, queue: nil) { [weak self] _ in
+            self?.ble.queue.async { self?.cloudChanged() }
+        }
     }
 
     /// On the Bluetooth queue, after every valid sentence.
@@ -56,6 +70,10 @@ final class AppModel {
 
         let now = Date()
         recordHealth(snap, id: id, now: now)
+        if now.timeIntervalSince(lastBackup) >= 300 {
+            lastBackup = now
+            backup.backUp(now: now)
+        }
 
         if now.timeIntervalSince(lastEnergyPublish) >= 1 {
             lastEnergyPublish = now
@@ -70,6 +88,28 @@ final class AppModel {
                 store.todayKm = today
             }
         }
+    }
+
+    // MARK: - iCloud backup
+
+    /// On the Bluetooth queue: a backup arrived after the components had already loaded.
+    private func cloudChanged() {
+        guard !backup.cloudChanged().isEmpty else { return }
+        energy.reload()
+        speedProfile.reload()
+        daily.reload()
+        health.reload()
+        DispatchQueue.main.async { [self] in
+            store.energy = energy.summary()
+            refreshInsights()
+            store.addLog(String(localized: "Restored from iCloud"))
+        }
+    }
+
+    /// When the app goes to the background.
+    func saveAll() {
+        health.flush()
+        ble.queue.async { [backup] in backup.backUp() }
     }
 
     // MARK: - Battery health

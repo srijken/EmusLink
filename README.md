@@ -54,7 +54,8 @@ With a paid Apple Developer account the app can be installed through TestFlight 
 - **Consumption**: consumption over the last 10, 25 or 50 km as a filled line (regeneration below zero), with the average and the projected range for that distance, plus averages for the trip / 10 km / 100 km and starting a new trip.
 - **Insights**: the most efficient speed (consumption per speed band of 10 km/h, with the range of speeds that is within 6 % of the lowest) and learning from trips (distance per day of the week: set, learned and measured, with the charge needed for tomorrow). Both fill up as you drive; the charge figure is advice only, the app does not control charging. Below that, battery health: the state of health per day and the cell spread at rest (the difference between the lowest and highest cell while hardly any current flows), with the last 7 days compared to the 30 before.
 - **Temperature warning**: a notification, a banner on the dashboard and an alert on CarPlay when the coldest or warmest part of the pack passes a limit (default 0 °C and 45 °C, with 3 °C hysteresis).
-- **Settings**: ABRP, GPS, temperature warning, module, diagnostics, version and log.
+- **Settings**: ABRP, GPS, temperature warning, module, iCloud backup, diagnostics, version and log.
+- **iCloud backup**: the learned data (consumption history, speed profile, daily distances, battery health) and the settings are copied to iCloud key-value storage every 5 minutes and when the app goes to the background, and restored after a reinstall or on a new iPhone. After a fresh install the app waits up to 10 minutes for the backup before it writes a new one. This needs the iCloud capability on the App ID (a paid developer account; automatic signing adds it).
 
 ## Languages
 
